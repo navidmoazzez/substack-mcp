@@ -1,0 +1,31 @@
+{
+  "name": "@thenavidm/substack-mcp",
+  "version": "1.0.0",
+  "description": "MCP server for Substack. Manage posts, drafts, notes, subscribers, and analytics. Works with Claude Code, Claude Desktop, Cursor, Windsurf, and any MCP-compatible client.",
+  "type": "module",
+  "bin": {
+    "substack-mcp": "index.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "zod": "^3.22.0"
+  },
+  "license": "AGPL-3.0",
+  "author": "Navid Moazzez",
+  "homepage": "https://navid.me",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thenavidm/substack-mcp"
+  },
+  "keywords": [
+    "mcp",
+    "substack",
+    "newsletter",
+    "mcp-server"
+  ],
+  "files": [
+    "index.mjs",
+    "README.md",
+    "LICENSE"
+  ]
+}
