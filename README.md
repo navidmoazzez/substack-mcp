@@ -23,6 +23,7 @@ Claude: Ranking your last 40 posts by paid signups.
 
 | | Section | |
 |---|---|---|
+| | [What makes this different](#what-makes-this-different) | Why pick this one |
 | 1 | [What you can ask it](#1-what-you-can-ask-it) | Real prompts, not features |
 | 2 | [Install](#2-install) | Every client, copy and paste |
 | 3 | [Connect your account](#3-connect-your-account) | Three ways, fastest first |
@@ -35,6 +36,26 @@ Claude: Ranking your last 40 posts by paid signups.
 | 10 | [Risks](#10-risks) | Read this before you install |
 | 11 | [Troubleshooting](#11-troubleshooting) | When something breaks |
 | 12 | [Build from source](#12-build-from-source) | Contributing |
+
+---
+
+## What makes this different
+
+Other Substack MCP servers cover the basics: list your drafts, create one, read your subscriber count. This one is built around the things that decide whether a post actually comes out right, and every claim below was checked against a live publication rather than assumed.
+
+| | |
+|---|---|
+| **Posts render correctly** | `draft_body` is a ProseMirror document, not HTML. Send HTML and Substack returns 200, then publishes your post with the tags visible as text. There is no error to catch, which is why this is the most common way a Substack integration gets it wrong. |
+| **Markdown both ways** | Markdown in, and markdown back out. Read a draft, change one sentence, send it back. Servers that only convert one way hand you raw ProseMirror JSON and leave you rebuilding the whole document to fix a typo. |
+| **Links become embeds** | A line holding only a YouTube, X, Spotify or Vimeo URL becomes a real player. Substack does that conversion in its editor, so it never happens through the API unless you do it yourself. |
+| **Paywalls from markdown** | `<paywall>` on its own line marks the paid split. |
+| **Subscribers, properly** | Filter on all 48 columns with 18 operators, and export the engagement metrics the list endpoint will only filter on and never return. |
+| **Analytics, all of it** | 16 publication reports, including which other Substacks share your readers. |
+| **More than one publication** | One login often owns several. Every tool takes a `publication` argument. |
+| **Notes can be scheduled** | Substack schedules posts but not Notes, so the queue lives here. |
+| **Research other writers** | Their posts and Notes with engagement attached, so you can rank by what worked. Custom domains resolve automatically. |
+| **Irreversible things ask first** | Publishing emails your whole list and cannot be undone. Those tools refuse to run without an explicit confirmation, and `SUBSTACK_READ_ONLY=1` removes them entirely. |
+| **Built to keep working** | A real request deadline, backoff on rate limits, typed errors that name the fix, and every MCP annotation set explicitly. |
 
 ---
 
