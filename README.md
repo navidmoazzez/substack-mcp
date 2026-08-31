@@ -2,7 +2,7 @@
 
 Give any AI agent full control of your Substack. Write and publish posts, work your subscriber list, read your analytics, and study what is working for other writers, from Claude, Cursor, or any MCP client.
 
-62 tools. No API key, because Substack does not have a public API. Your session stays on your machine.
+63 tools. No API key, because Substack does not have a public API. Your session stays on your machine.
 
 Built by [Navid Moazzez](https://navid.me).
 
@@ -26,7 +26,7 @@ Claude: Ranking your last 40 posts by paid signups.
 | 1 | [What you can ask it](#1-what-you-can-ask-it) | Real prompts, not features |
 | 2 | [Install](#2-install) | Every client, copy and paste |
 | 3 | [Connect your account](#3-connect-your-account) | Three ways, fastest first |
-| 4 | [Tools](#4-tools) | All 62, with arguments |
+| 4 | [Tools](#4-tools) | All 63, with arguments |
 | 5 | [Writing safely](#5-writing-safely) | Why publishing asks twice |
 | 6 | [Writing posts](#6-writing-posts) | Markdown, embeds, paywalls |
 | 7 | [Several publications](#7-several-publications) | One login, many Substacks |
@@ -169,7 +169,7 @@ Substack sessions last around 90 days. When calls start failing with an authenti
 
 ## 4. Tools
 
-62 tools. Every one declares whether it reads, writes, or does something that cannot be undone, so your client can show you the difference before anything runs.
+63 tools. Every one declares whether it reads, writes, or does something that cannot be undone, so your client can show you the difference before anything runs.
 
 Every publication-scoped tool takes an optional `publication` argument to pick which connected Substack it acts on. See [section 7](#7-several-publications).
 
@@ -356,7 +356,7 @@ A careless call trips over that. An intentional one clears it in a single retry.
 "env": { "SUBSTACK_READ_ONLY": "1" }
 ```
 
-Drops the server to its 38 read tools. Write tools are not merely refused, they are not advertised, so the model never tries.
+Drops the server to its 39 read tools. Write tools are not merely refused, they are not advertised, so the model never tries.
 
 `SUBSTACK_ALLOW_DESTRUCTIVE=0` is the middle setting: drafting and tagging still work, publishing and deleting do not.
 
@@ -420,7 +420,7 @@ Substack's editor has no table node. Rather than mangle the pipes into a paragra
 
 ### Reading it back
 
-`get_draft` returns markdown by default. Edit one sentence, send it back to `update_draft`, and the rest of the formatting survives. Neither of the other Substack MCP servers does this, which is why editing an existing draft through them means reconstructing the whole document from ProseMirror JSON.
+`get_draft` returns markdown by default. Edit one sentence, send it back to `update_draft`, and the rest of the formatting survives.
 
 `preview_draft_body` shows exactly what a body will produce, including how many embeds were created and whether the paywall registered, without touching anything.
 
@@ -587,7 +587,7 @@ src/
   auth/        encrypted session store, the login command
   content/     markdown <-> ProseMirror, embeds, images
   subscribers/ the 48-column filter model
-  tools/       62 tools, grouped by subject
+  tools/       63 tools, grouped by subject
   transport/   stdio and HTTP
   safety.ts    the write guard
   scheduler.ts the local Note queue
@@ -620,32 +620,43 @@ Because this rides an undocumented API, **the most valuable contribution is a fi
 | `SUBSTACK_MCP_TOKEN` | | Bearer token for HTTP |
 | `SUBSTACK_MCP_ALLOWED_ORIGINS` | | Extra origins beyond localhost |
 
-### Running it on a server
-
-`deploy/install.sh` installs it as a hardened systemd service, on its own user,
-its own directory and loopback only:
-
-```bash
-sudo bash deploy/install.sh --publication example.substack.com
-```
-
 ## Versions
 
 See [VERSIONS.md](VERSIONS.md).
 
-## How this compares to the other two
+## About the author
 
-[docs/reference-audit.md](docs/reference-audit.md) is a line-by-line audit of
-`marcomoauro/substack-mcp` and `conorbronsdon/substack-mcp`, read from their
-source rather than their READMEs, covering what each does well and what this
-one does differently.
+Navid Moazzez is a leading AI business strategist and the host of the [AI Creator Summit](https://aicreatorsummit.com), watched by 100,000+ creators. He helps creators and founders master AI and build their own AI Operating System (AI OS) to automate their business and life. This Substack MCP server is one piece of that system.
+
+**Links**
+
+- Personal website: [navid.me](https://navid.me)
+- Store: [navid.bio](https://navid.bio)
+- AI OS Starter Kit: [aios.guide](https://aios.guide)
+- AI OS Workshop: [aiosworkshop.com](https://aiosworkshop.com)
+- AI Creator Summit: [aicreatorsummit.com](https://aicreatorsummit.com)
+- AI Tools Library: [aitoolslibrary.io](https://aitoolslibrary.io)
+- Video Gear Guide: [videogear.guide](https://videogear.guide)
+- YouTube: [@thenavidm](https://youtube.com/@thenavidm?sub_confirmation=1) and [@thenavidai](https://youtube.com/@thenavidai?sub_confirmation=1)
+- X: [@thenavidm](https://x.com/thenavidm)
+- Instagram: [@thenavidm](https://instagram.com/thenavidm)
+- LinkedIn: [thenavidm](https://linkedin.com/in/thenavidm)
 
 ## Dependencies
 
-Two: `@modelcontextprotocol/sdk` and `zod`. `playwright` is an optional peer dependency, used only by `login --playwright`.
+| Library | Licence | What it does |
+|---|---|---|
+| [MCP TypeScript SDK](https://github.com/modelcontextprotocol/typescript-sdk) | MIT | The MCP server and transports |
+| [zod](https://github.com/colinhacks/zod) | MIT | Tool argument schemas and validation |
+
+[Playwright](https://github.com/microsoft/playwright) is an optional peer dependency, used only by `login --playwright` and never loaded by the server.
 
 ## License
 
-MIT. See [LICENSE](LICENSE).
+[MIT](./LICENSE). Free to use, modify, and share.
 
 Not affiliated with, endorsed by, or connected to Substack Inc.
+
+---
+
+© 2026 NM Media. Made with ❤️ by [Navid Moazzez](https://navid.me).

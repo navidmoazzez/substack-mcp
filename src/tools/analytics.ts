@@ -221,6 +221,41 @@ Reports covering a period default to the last 30 days, or the last year for rete
   }),
 
   defineTool({
+    name: "get_growth_sources",
+    title: "Get subscriber growth sources",
+    risk: "read",
+    description:
+      "Where new subscribers came from in a window, ranked by how many each source brought. Same data as get_analytics with the growth_sources report, kept as its own tool because it answers one of the most common questions directly.",
+    schema: {
+      from_date: z
+        .string()
+        .regex(DATE_PATTERN, "from_date must be YYYY-MM-DD")
+        .optional()
+        .describe("Start of the window, YYYY-MM-DD. Defaults to 30 days ago."),
+      to_date: z
+        .string()
+        .regex(DATE_PATTERN, "to_date must be YYYY-MM-DD")
+        .optional()
+        .describe("End of the window, YYYY-MM-DD. Defaults to today."),
+      ...publicationArg,
+    },
+    handler: async (args, ctx) => {
+      const creds = ctx.publication(args.publication);
+      const now = new Date();
+      return ctx.client.request(
+        `${ctx.client.apiUrl(creds)}/publication/stats/growth/sources` +
+          query({
+            from_date: args.from_date ?? asDate(daysBefore(now, DEFAULT_WINDOW_DAYS)),
+            to_date: args.to_date ?? asDate(now),
+            order_by: "users",
+            order_direction: "desc",
+          }),
+        { creds },
+      );
+    },
+  }),
+
+  defineTool({
     name: "get_revenue_summary",
     title: "Get revenue summary",
     risk: "read",

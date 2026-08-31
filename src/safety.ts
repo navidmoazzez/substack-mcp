@@ -1,9 +1,9 @@
 /**
  * Decides whether a write is allowed to reach Substack.
  *
- * The reference implementations take opposite positions and neither is right.
- * One ships publish and delete unguarded. The other removes them and calls that
- * safety, which just moves the work back to the human without making anything
+ * The obvious options are both bad. Shipping publish and delete unguarded means
+ * one mis-parsed instruction reaches your whole list. Removing them and calling
+ * that safety just moves the work back to the human without making anything
  * safer.
  *
  * The real hazard is specific and worth naming. `publish_draft` with `send:true`

@@ -54,8 +54,8 @@ jobs:
                   .find(m => m.id === 2);
                 const count = listed?.result?.tools?.length ?? 0;
                 console.log(`tools: ${count}`);
-                if (count !== 62) {
-                  console.error(`expected 62 tools, got ${count}`);
+                if (count !== 63) {
+                  console.error(`expected 63 tools, got ${count}`);
                   process.exit(1);
                 }
                 const unannotated = listed.result.tools.filter(

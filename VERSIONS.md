@@ -8,7 +8,7 @@
 
 ## 2.0.0
 
-A rewrite. TypeScript, 62 tools, and a correctness fix that mattered.
+A rewrite. TypeScript, 63 tools, and a correctness fix that mattered.
 
 ### The fix
 
@@ -20,7 +20,7 @@ Both are fixed, and a test exists for each so neither can come back.
 
 ### Tools
 
-26 to 62.
+26 to 63.
 
 New: `get_draft`, `unschedule_draft`, `list_scheduled_posts`, `set_draft_body`, `preview_draft_body`, `get_sections`, `get_post_by_id`, `rank_posts`, `publish_note_with_link`, `export_subscribers`, `get_analytics`, `list_publication_tags`, `create_tag`, `get_post_tags`, `add_tag_to_post`, `remove_tag_from_post`, `get_post_comments`, `comment_on_post`, `delete_comment`, `list_subscriptions`, `list_reader_posts`, `get_reader_post`, `get_reader_feed`, `get_profile_feed`, `get_comment_thread`, `restack_note`, `get_publication_settings`, `update_publication_settings`, `get_user_profile`, `list_templates`, `create_template`, `delete_template`, `create_draft_from_template`, `research_creator_posts`, `research_creator_notes`, `compare_publications`, `upload_image`.
 

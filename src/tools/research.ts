@@ -1,9 +1,9 @@
 /**
  * Researching other people's Substacks.
  *
- * Neither reference implementation has any of this, and it is the half of the
- * job most people actually want: not "manage my drafts" but "what is working
- * for the people I am competing with, and what should I write next".
+ * This is the half of the job most people actually want. Not "manage my drafts"
+ * but "what is working for the people I am up against, and what should I write
+ * next".
  *
  * These read public data with engagement numbers attached, so a model can rank
  * by what performed rather than by what was published most recently.

@@ -1,13 +1,11 @@
 /**
  * Substack's document format back to markdown.
  *
- * Neither reference implementation does this, and its absence is why editing an
- * existing draft through them is so awkward: you can read a draft, but what
- * comes back is a wall of ProseMirror JSON. A model then has to reconstruct the
- * whole document to change one sentence, and usually flattens the formatting
- * doing it.
+ * Without this, reading a draft gives you a wall of ProseMirror JSON. A model
+ * then has to reconstruct the whole document to change one sentence, and
+ * usually flattens the formatting doing it.
  *
- * With this, `get_draft` returns readable markdown, the model edits the part it
+ * With it, `get_draft` returns readable markdown, the model edits the part it
  * was asked to change, and `update_draft` parses it straight back. Round trip.
  */
 
