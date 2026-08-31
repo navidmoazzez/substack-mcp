@@ -59,6 +59,11 @@ The last one is the point. It reads your existing posts, writes a new draft in y
 
 Node 20 or newer. Nothing else.
 
+> Not released yet. The `npx` commands below work once `v2.0.0` is tagged and
+> the release workflow publishes to npm. Until then, install from source with
+> [section 13](#13-build-from-source) and point your client at `node
+> /path/to/substack-mcp/dist/index.js`.
+
 ### Claude Code
 
 ```bash
@@ -91,11 +96,15 @@ Same block, in that client's MCP config file. Any client that speaks MCP over st
 ### Docker
 
 ```bash
+docker build -t substack-mcp .
 docker run -i --rm \
   -e SUBSTACK_PUBLICATION_URL=example.substack.com \
   -e SUBSTACK_SESSION_TOKEN=your-token \
-  ghcr.io/thenavidm/substack-mcp:latest
+  substack-mcp
 ```
+
+Once a version is tagged, `ghcr.io/thenavidm/substack-mcp:latest` is published
+and can be used instead of building.
 
 ### Check it worked
 
@@ -555,7 +564,7 @@ docker run -d --restart=unless-stopped \
   -e SUBSTACK_MCP_HOST=0.0.0.0 \
   -e SUBSTACK_MCP_HOME=/data \
   -v substack-mcp:/data \
-  ghcr.io/thenavidm/substack-mcp:latest --http
+  substack-mcp --http
 ```
 
 The volume keeps the scheduled-Note queue across restarts.
@@ -611,9 +620,25 @@ Because this rides an undocumented API, **the most valuable contribution is a fi
 | `SUBSTACK_MCP_TOKEN` | | Bearer token for HTTP |
 | `SUBSTACK_MCP_ALLOWED_ORIGINS` | | Extra origins beyond localhost |
 
+### Running it on a server
+
+`deploy/install.sh` installs it as a hardened systemd service, on its own user,
+its own directory and loopback only:
+
+```bash
+sudo bash deploy/install.sh --publication example.substack.com
+```
+
 ## Versions
 
 See [VERSIONS.md](VERSIONS.md).
+
+## How this compares to the other two
+
+[docs/reference-audit.md](docs/reference-audit.md) is a line-by-line audit of
+`marcomoauro/substack-mcp` and `conorbronsdon/substack-mcp`, read from their
+source rather than their READMEs, covering what each does well and what this
+one does differently.
 
 ## Dependencies
 

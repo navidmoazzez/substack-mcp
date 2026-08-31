@@ -1,10 +1,15 @@
 mcp
+mcp-server
 model-context-protocol
 substack
 newsletter
 claude
 claude-code
+claude-desktop
 cursor
+windsurf
+anthropic
 ai-agents
-typescript
 llm-tools
+typescript
+substack-api
