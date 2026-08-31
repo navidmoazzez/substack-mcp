@@ -116,18 +116,23 @@ accent_color and color_links are the two worth knowing about: Substack stores th
     title: "Search Substack publications",
     risk: "read",
     description:
-      "Search Substack for publications by name or topic. Needs no authentication, so it works for finding writers in a niche before you follow any of them.",
+      "Search Substack for publications by name or topic. Returns the canonical host for each, which is what the research tools need for a publication on a custom domain.",
     schema: {
       query: z.string().describe("What to search for: a name, a topic, a niche."),
       page: z.number().optional().describe("Page number, starting at 0."),
       limit: z.number().optional().describe("Results per page. 1 to 50, default 20."),
+      ...publicationArg,
     },
     handler: async (args, ctx) => {
       const limit = clamp(args.limit, 20, 50);
+      // Verified against the live API: without a session this endpoint answers
+      // 200 with an empty results array rather than 401, so an unauthenticated
+      // call looks like "no matches" instead of "not signed in".
+      const creds = ctx.publication(args.publication);
       const data = await ctx.client.request<Record<string, unknown>>(
         "https://substack.com/api/v1/publication/search" +
           query({ query: args.query, page: args.page ?? 0, limit }),
-        { authenticated: false },
+        { creds },
       );
 
       const results = (Array.isArray(data.results) ? data.results : []) as Record<

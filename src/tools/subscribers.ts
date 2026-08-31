@@ -19,7 +19,7 @@ import {
   type Filter,
   type Operator,
 } from "../subscribers/columns.js";
-import { clamp, defineTool, publicationArg } from "./kit.js";
+import { clamp, defineTool, publicationArg, query } from "./kit.js";
 
 const OPERATOR_NAMES = [
   ...new Set(Object.values(OPERATORS_BY_TYPE).flatMap((ops) => Object.keys(ops))),
@@ -223,24 +223,23 @@ There is no paging: an export covers the whole matching set.`,
       const creds = ctx.publication(args.publication);
       const api = ctx.client.apiUrl(creds);
 
-      const direct = await ctx.client
-        .tryRequest<Record<string, unknown>>(`${api}/publication/stats/subscriber_count`, { creds })
-        .catch(() => null);
-
-      if (direct) {
-        return { ...direct, source: "subscriber_count" };
-      }
-
-      // The dashboard summary carries the same numbers when the direct endpoint
-      // is unavailable for this publication.
-      const summary = await ctx.client.request<Record<string, unknown>>(
-        `${api}/publish-dashboard/summary-v2`,
+      // There is no subscriber_count endpoint: /publication/stats/subscriber_count
+      // answers 404. The dashboard summary is where the numbers actually live,
+      // and it needs a `range` in days.
+      const summary = await ctx.client.request<Record<string, number>>(
+        `${api}/publish-dashboard/summary-v2` + query({ range: 30 }),
         { creds },
       );
+
       return {
-        subscriber_count: summary.subscriber_count ?? summary.total_subscribers ?? null,
-        paid_subscriber_count: summary.paid_subscriber_count ?? null,
-        source: "dashboard_summary",
+        subscriber_count: summary.totalSubscribersEnd ?? null,
+        paid_subscriber_count: summary.paidSubscribersEnd ?? null,
+        free_subscriber_count:
+          summary.totalSubscribersEnd !== undefined && summary.paidSubscribersEnd !== undefined
+            ? summary.totalSubscribersEnd - summary.paidSubscribersEnd
+            : null,
+        subscribers_30_days_ago: summary.totalSubscribersStart ?? null,
+        arr: summary.arrEnd ?? null,
       };
     },
   }),

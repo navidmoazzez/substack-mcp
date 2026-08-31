@@ -8,7 +8,7 @@
  */
 
 import { z } from "zod";
-import { defineTool, publicationArg, query } from "./kit.js";
+import { clamp, defineTool, publicationArg, query } from "./kit.js";
 
 type WindowKind = "date" | "iso" | "none";
 
@@ -193,12 +193,21 @@ Reports covering a period default to the last 30 days, or the last year for rete
     title: "Get the dashboard summary",
     risk: "read",
     description:
-      "The headline numbers from the publishing dashboard: subscribers, paid subscribers, revenue and recent activity. The best single call for 'how is my newsletter doing'.",
-    schema: { ...publicationArg },
+      "The headline numbers from the publishing dashboard: subscribers at the start and end of the window, paid subscribers, ARR and recent activity. The best single call for 'how is my newsletter doing'.",
+    schema: {
+      range_days: z
+        .number()
+        .optional()
+        .describe("Window in days, for example 7, 30 or 90. Defaults to 30."),
+      ...publicationArg,
+    },
     handler: async (args, ctx) => {
       const creds = ctx.publication(args.publication);
+      // Verified against the live API: this endpoint answers 400 without a
+      // `range`, and only accepts a plain integer number of days.
       return ctx.client.request(
-        `${ctx.client.apiUrl(creds)}/publish-dashboard/summary-v2`,
+        `${ctx.client.apiUrl(creds)}/publish-dashboard/summary-v2` +
+          query({ range: clamp(args.range_days, 30, 3650) }),
         { creds },
       );
     },

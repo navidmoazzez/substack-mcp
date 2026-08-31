@@ -432,8 +432,15 @@ export const draftTools = [
       const creds = ctx.publication(args.publication);
       const limit = clamp(args.limit, 25, 100);
       const data = await ctx.client.request<{ posts?: unknown[]; total?: number }>(
+        // Verified against the live API: this endpoint rejects draft_publish_at
+        // and post_date as sort keys, and 400s with no order_by at all.
         `${ctx.client.apiUrl(creds)}/post_management/scheduled` +
-          query({ offset: args.offset ?? 0, limit, order_by: "draft_publish_at", order_direction: "asc" }),
+          query({
+            offset: args.offset ?? 0,
+            limit,
+            order_by: "draft_updated_at",
+            order_direction: "asc",
+          }),
         { creds },
       );
       const posts = Array.isArray(data.posts) ? data.posts : [];

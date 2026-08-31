@@ -180,7 +180,7 @@ Nothing above is required. Set `SUBSTACK_PUBLICATION_URL` and `SUBSTACK_SESSION_
 
 ### When it expires
 
-Substack sessions last around 90 days. When calls start failing with an authentication error, run `login` again, or paste a fresh cookie. `doctor` warns you once a stored session passes 75 days.
+Sessions do expire, commonly reported at around 90 days, though I have not measured it. When calls start failing with an authentication error, run `login` again, or paste a fresh cookie. `doctor` warns you once a stored session passes 75 days.
 
 ---
 
@@ -433,7 +433,7 @@ The part only paying subscribers get.
 
 ### Tables
 
-Substack's editor has no table node. Rather than mangle the pipes into a paragraph, a markdown table is preserved verbatim in a code block, so the content survives and you can reformat it in the editor.
+Substack's document format has no table node, so a table cannot be rendered natively. Rather than mangle the pipes into a paragraph, a markdown table is preserved verbatim in a code block. The content survives and you can reformat it in the editor.
 
 ### Reading it back
 
@@ -483,7 +483,7 @@ Every request goes through one client, so an upstream change is fixed in one fil
 
 **Request spacing.** A floor of 350ms between requests, serialised through a queue, so a model looping over 200 posts does not get your account rate limited. `SUBSTACK_MIN_REQUEST_INTERVAL_MS`.
 
-**A browser identity.** Publications on custom domains sit behind Cloudflare, which blocks unrecognised clients with `error code: 1010`. The client sends a browser User-Agent, Referer and Origin, and the error mapper recognises a Cloudflare block hiding inside a 403 and tells you to use the canonical host.
+**A browser identity.** The client sends a browser User-Agent, Referer and Origin, because some publications sit behind Cloudflare, which blocks unrecognised clients. The error mapper recognises a Cloudflare block hiding inside a 403 and tells you to use the canonical host.
 
 Errors map to typed classes, so the message names the fix rather than saying "Substack API error":
 
@@ -532,9 +532,11 @@ Your posts, drafts and subscribers are never copied locally. Every read goes to 
 
 Run `npx @thenavidm/substack-mcp doctor` first. It checks credentials, config, connectivity and byline resolution, and names what is wrong.
 
-**"Substack rejected the session"** Your cookie expired, at around 90 days. Get a fresh `connect.sid`, or run `login` again.
+**"Substack rejected the session"** Your cookie expired. Get a fresh `connect.sid`, or run `login` again.
 
-**403 with `error code: 1010`** Cloudflare blocking a custom domain. Set `SUBSTACK_PUBLICATION_URL` to the canonical `*.substack.com` host instead. Calls to the canonical host are served directly; custom-domain calls can redirect and then 401.
+**Calls fail on a custom domain** A publication served on its own domain does not answer the API there. The request redirects and ends in a 404. Set `SUBSTACK_PUBLICATION_URL` to the canonical `*.substack.com` host instead, which is served directly. The research tools retry the canonical host automatically; everything else needs it configured.
+
+Some custom domains sit behind Cloudflare, which can answer 403 with `error code: 1010`. That is the same fix.
 
 **Post renders with visible HTML tags** You are on an older version, or something else wrote that draft. This server never sends HTML as `draft_body`. Check with `preview_draft_body`.
 
