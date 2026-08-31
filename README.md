@@ -79,20 +79,50 @@ The last one is the point. It reads your existing posts, writes a new draft in y
 
 Node 20 or newer. Nothing else.
 
-> Not released yet. The `npx` commands below work once `v2.0.0` is tagged and
-> the release workflow publishes to npm. Until then, install from source with
-> [section 13](#13-build-from-source) and point your client at `node
-> /path/to/substack-mcp/dist/index.js`.
+> Not released to npm yet, so the `npx` commands below will not resolve until
+> `v2.0.0` is tagged. Until then, [build from source](#12-build-from-source) and
+> replace `"command": "npx"` and its `args` with
+> `"command": "node", "args": ["/full/path/to/substack-mcp/dist/index.js"]`.
+> Everything else on this page is the same.
 
 ### Claude Code
 
+One line, from anywhere in a terminal:
+
 ```bash
-claude mcp add substack -- npx -y @thenavidm/substack-mcp
+claude mcp add substack \
+  -e SUBSTACK_PUBLICATION_URL=example.substack.com \
+  -e SUBSTACK_SESSION_TOKEN=your-connect-sid-value \
+  -- npx -y @thenavidm/substack-mcp
 ```
+
+Then run `/mcp` inside Claude Code. `substack` should be listed as connected.
+
+To remove it later: `claude mcp remove substack`.
 
 ### Claude Desktop
 
-`claude_desktop_config.json`:
+**1. Open the config file.**
+
+In Claude Desktop, go to **Settings**, then **Developer**, then click **Edit Config**. That reveals `claude_desktop_config.json` in your file manager. Open it in any text editor.
+
+If you would rather go straight there:
+
+| | |
+|---|---|
+| macOS | `~/Library/Application Support/Claude/claude_desktop_config.json` |
+| Windows | `%APPDATA%\Claude\claude_desktop_config.json` |
+| Linux | `~/.config/Claude/claude_desktop_config.json` |
+
+On macOS you can open it from a terminal with:
+
+```bash
+open -e ~/Library/Application\ Support/Claude/claude_desktop_config.json
+```
+
+**2. Add the server.**
+
+If the file is empty or does not exist, paste this whole thing in:
 
 ```json
 {
@@ -109,9 +139,48 @@ claude mcp add substack -- npx -y @thenavidm/substack-mcp
 }
 ```
 
-### Cursor, Windsurf, VS Code, Zed, Cline
+If you already have other servers, add only the `"substack": { ... }` part inside your existing `"mcpServers"`, and put a comma after the entry before it. The file has to stay valid JSON. A single missing comma or trailing comma stops every server from loading, not just this one.
 
-Same block, in that client's MCP config file. Any client that speaks MCP over stdio works.
+Replace `example.substack.com` with your own publication, and `your-connect-sid-value` with your session cookie. [Section 3](#3-connect-your-account) covers where to find it.
+
+**3. Restart properly.**
+
+Quit Claude Desktop completely and reopen it. On macOS closing the window is not enough, use **Cmd+Q**. On Windows quit it from the system tray. Claude only reads that file at startup.
+
+**4. Check it worked.**
+
+Look for the tools icon in the message box and click it. You should see `substack` with its tools listed. Then ask:
+
+> How many Substack subscribers do I have?
+
+If nothing appears, see [Troubleshooting](#11-troubleshooting). Claude Desktop's own logs are the fastest way in:
+
+| | |
+|---|---|
+| macOS | `~/Library/Logs/Claude/mcp-server-substack.log` |
+| Windows | `%APPDATA%\Claude\logs\mcp-server-substack.log` |
+
+```bash
+tail -n 50 ~/Library/Logs/Claude/mcp-server-substack.log
+```
+
+Two things account for most failures. Node is not installed or not on the PATH that Claude Desktop sees, in which case use the full path to `node` as the `command`. Or the JSON is malformed, which you can check by pasting the file into any JSON validator.
+
+### Cursor
+
+Create `~/.cursor/mcp.json` for every project, or `.cursor/mcp.json` inside a single project. Use the same JSON as Claude Desktop. Then reload the window, or open **Settings**, **MCP**, and toggle the server.
+
+### Windsurf
+
+`~/.codeium/windsurf/mcp_config.json`, same JSON, then reload.
+
+### VS Code
+
+`.vscode/mcp.json` in a project, or run **MCP: Add Server** from the command palette.
+
+### Everything else
+
+Zed, Cline, Continue and anything else that speaks MCP over stdio all work. They each keep their config somewhere different, but they all want the same three things: the `command` (`npx`), the `args`, and the `env` with your publication and token.
 
 ### Docker
 
