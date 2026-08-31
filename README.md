@@ -607,7 +607,7 @@ See [VERSIONS.md](VERSIONS.md).
 
 ## About the author
 
-Navid Moazzez is a leading AI business strategist and the host of the [AI Creator Summit](https://aicreatorsummit.com), watched by 100,000+ creators. He helps creators and founders master AI and build their own AI Operating System (AI OS) to automate their business and life. This Substack MCP server is one piece of that system.
+Navid Moazzez is a leading AI business strategist. He helps creators and founders master AI and build their own AI Operating System (AI OS) to automate their business and life. This Substack MCP server is one piece of that system.
 
 **Links**
 
@@ -615,9 +615,7 @@ Navid Moazzez is a leading AI business strategist and the host of the [AI Creato
 - Store: [navid.bio](https://navid.bio)
 - AI OS Starter Kit: [aios.guide](https://aios.guide)
 - AI OS Workshop: [aiosworkshop.com](https://aiosworkshop.com)
-- AI Creator Summit: [aicreatorsummit.com](https://aicreatorsummit.com)
 - AI Tools Library: [aitoolslibrary.io](https://aitoolslibrary.io)
-- Video Gear Guide: [videogear.guide](https://videogear.guide)
 - YouTube: [@thenavidm](https://youtube.com/@thenavidm?sub_confirmation=1) and [@thenavidai](https://youtube.com/@thenavidai?sub_confirmation=1)
 - X: [@thenavidm](https://x.com/thenavidm)
 - Instagram: [@thenavidm](https://instagram.com/thenavidm)
