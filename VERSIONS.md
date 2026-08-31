@@ -22,7 +22,7 @@ Both are fixed, and a test exists for each so neither can come back.
 
 26 to 65.
 
-New: `get_draft`, `unschedule_draft`, `list_scheduled_posts`, `set_draft_body`, `preview_draft_body`, `get_sections`, `get_post_by_id`, `rank_posts`, `publish_note_with_link`, `export_subscribers`, `get_analytics`, `list_publication_tags`, `create_tag`, `get_post_tags`, `add_tag_to_post`, `remove_tag_from_post`, `get_post_comments`, `comment_on_post`, `delete_comment`, `list_subscriptions`, `list_reader_posts`, `get_reader_post`, `get_reader_feed`, `get_profile_feed`, `get_comment_thread`, `restack_note`, `get_publication_settings`, `update_publication_settings`, `get_user_profile`, `list_templates`, `create_template`, `delete_template`, `create_draft_from_template`, `research_creator_posts`, `research_creator_notes`, `compare_publications`, `upload_image`.
+New: `get_draft`, `unschedule_draft`, `list_scheduled_posts`, `set_draft_body`, `preview_draft_body`, `get_sections`, `get_post_by_id`, `rank_posts`, `publish_note_with_link`, `export_subscribers`, `get_analytics`, `list_publication_tags`, `create_tag`, `get_post_tags`, `add_tag_to_post`, `remove_tag_from_post`, `get_post_comments`, `comment_on_post`, `delete_comment`, `list_subscriptions`, `list_reader_posts`, `get_reader_post`, `get_reader_feed`, `get_profile_feed`, `get_comment_thread`, `restack_note`, `get_publication_settings`, `update_publication_settings`, `get_user_profile`, `list_templates`, `create_template`, `delete_template`, `create_draft_from_template`, `research_creator_posts`, `research_creator_notes`, `compare_publications`, `upload_image`, `list_contributors`, `get_import_status`.
 
 `list_subscribers` now filters on all 48 columns with 18 operators, instead of taking only an offset and a limit.
 
@@ -61,6 +61,12 @@ stdio by default. `--http` serves streamable HTTP with Origin validation and opt
 ### Also
 
 Two MCP resources and four prompts. Multi-publication support, with a `publication` argument on every publication-scoped tool. 69 tests.
+
+### Verified against a live publication
+
+Every read-only tool was run against a real Substack account rather than checked by reading code. That found four bugs, all fixed here: `get_dashboard_summary` and `get_subscriber_count` both failed because the dashboard endpoint needs a date range and the old subscriber-count endpoint is gone, `list_scheduled_posts` sorted by a field the endpoint rejects, and `search_publications` silently returned nothing because it answers 200 with an empty list when unauthenticated.
+
+The write path was proven too. A draft created from markdown stores as a real ProseMirror document with a working YouTube embed and a paywall, reads back as markdown, and survives an edit.
 
 ### Breaking changes from 1.x
 

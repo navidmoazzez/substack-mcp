@@ -35,7 +35,7 @@ Claude: Ranking your last 40 posts by paid signups.
 | 9 | [Your data](#9-your-data) | What is stored and where |
 | 10 | [Risks](#10-risks) | Read this before you install |
 | 11 | [Troubleshooting](#11-troubleshooting) | When something breaks |
-| 12 | [Build from source](#12-build-from-source) | Contributing |
+| 12 | [Run it from source](#12-run-it-from-source) | Install without npm |
 
 ---
 
@@ -80,7 +80,7 @@ The last one is the point. It reads your existing posts, writes a new draft in y
 Node 20 or newer. Nothing else.
 
 > Not released to npm yet, so the `npx` commands below will not resolve until
-> `v2.0.0` is tagged. Until then, [build from source](#12-build-from-source) and
+> `v2.0.0` is tagged. Until then, [run it from source](#12-run-it-from-source) and
 > replace `"command": "npx"` and its `args` with
 > `"command": "node", "args": ["/full/path/to/substack-mcp/dist/index.js"]`.
 > Everything else on this page is the same.
@@ -642,15 +642,20 @@ Some custom domains sit behind Cloudflare, which can answer 403 with `error code
 
 ---
 
-## 12. Build from source
+## 12. Run it from source
+
+Until it is on npm, this is how you install it. It is also how you read the code.
 
 ```bash
 git clone https://github.com/thenavidm/substack-mcp.git
 cd substack-mcp
 npm install
 npm run build
-npm test
 ```
+
+That produces `dist/index.js`. Point any client at it with `"command": "node"` and `"args": ["/full/path/to/substack-mcp/dist/index.js"]`, then follow [section 3](#3-connect-your-account) as normal.
+
+`npm test` runs the suite. `npm run typecheck` checks types without building.
 
 ```
 src/
@@ -664,9 +669,7 @@ src/
   scheduler.ts the local Note queue
 ```
 
-Adding a tool means one `defineTool` call. Guarding, annotations, error handling and publication selection are applied by the registration kit, so a tool module only describes what it does.
-
-Because this rides an undocumented API, **the most valuable contribution is a fix when an endpoint changes.** If a tool stops working, open an issue with the tool name and the error. Never include your cookie.
+Every tool is one `defineTool` call. Guarding, annotations, error handling and publication selection are applied centrally, so a tool file only describes what it does.
 
 ---
 

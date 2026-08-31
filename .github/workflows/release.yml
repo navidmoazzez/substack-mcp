@@ -50,7 +50,13 @@ jobs:
       - run: npm run build
       # --provenance links the published package to this workflow run, so
       # anyone can verify the tarball came from this commit.
-      - run: npm publish --access public --provenance
+      - name: Publish, if an npm token is configured
+        run: |
+          if [ -z "${NODE_AUTH_TOKEN}" ]; then
+            echo "No NPM_TOKEN secret set, skipping the npm publish."
+            exit 0
+          fi
+          npm publish --access public --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -76,6 +82,7 @@ jobs:
 
   release:
     needs: [npm, docker]
+    if: always() && needs.verify.result == 'success'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
