@@ -112,6 +112,58 @@ accent_color and color_links are the two worth knowing about: Substack stores th
   }),
 
   defineTool({
+    name: "list_contributors",
+    title: "List who can write on the publication",
+    risk: "read",
+    description:
+      "List the people attached to the publication, with their role and their numeric user id. The id is what a byline needs, so this is how you find out who a post can be attributed to besides yourself.",
+    schema: { ...publicationArg },
+    handler: async (args, ctx) => {
+      const creds = ctx.publication(args.publication);
+      const data = await ctx.client.request<unknown>(
+        `${ctx.client.apiUrl(creds)}/publication/users`,
+        { creds },
+      );
+      const users = (Array.isArray(data) ? data : []) as Record<string, unknown>[];
+      return {
+        count: users.length,
+        contributors: users.map((u) => ({
+          id: u.id,
+          name: u.name,
+          role: u.role ?? null,
+          bio: u.bio ?? null,
+          photo_url: u.photo_url ?? null,
+          byline_only: u.is_byline_only ?? false,
+        })),
+      };
+    },
+  }),
+
+  defineTool({
+    name: "get_import_status",
+    title: "Get the last subscriber import",
+    risk: "read",
+    description:
+      "Read the result of the most recent subscriber import: when it ran, how many addresses were in it, how many were added, and how many were skipped. Use it to check whether an import actually landed.",
+    schema: { ...publicationArg },
+    handler: async (args, ctx) => {
+      const creds = ctx.publication(args.publication);
+      const data = await ctx.client.request<Record<string, unknown>>(
+        `${ctx.client.apiUrl(creds)}/import`,
+        { creds },
+      );
+      return {
+        uploaded_at: data.upload_date ?? null,
+        total: data.total ?? null,
+        added: data.is_added ?? null,
+        skipped: data.is_skipped ?? null,
+        limited: data.is_limited ?? null,
+        passed_verification: data.passImportVerification ?? null,
+      };
+    },
+  }),
+
+  defineTool({
     name: "search_publications",
     title: "Search Substack publications",
     risk: "read",

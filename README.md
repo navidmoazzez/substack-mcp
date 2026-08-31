@@ -2,7 +2,7 @@
 
 Give any AI agent full control of your Substack. Write and publish posts, work your subscriber list, read your analytics, and study what is working for other writers, from Claude, Cursor, or any MCP client.
 
-63 tools. No API key, because Substack does not have a public API. Your session stays on your machine.
+65 tools. No API key, because Substack does not have a public API. Your session stays on your machine.
 
 Built by [Navid Moazzez](https://navid.me).
 
@@ -26,7 +26,7 @@ Claude: Ranking your last 40 posts by paid signups.
 | 1 | [What you can ask it](#1-what-you-can-ask-it) | Real prompts, not features |
 | 2 | [Install](#2-install) | Every client, copy and paste |
 | 3 | [Connect your account](#3-connect-your-account) | Three ways, fastest first |
-| 4 | [Tools](#4-tools) | All 63, with arguments |
+| 4 | [Tools](#4-tools) | All 65, with arguments |
 | 5 | [Writing safely](#5-writing-safely) | Why publishing asks twice |
 | 6 | [Writing posts](#6-writing-posts) | Markdown, embeds, paywalls |
 | 7 | [Several publications](#7-several-publications) | One login, many Substacks |
@@ -186,7 +186,7 @@ Sessions do expire, commonly reported at around 90 days, though I have not measu
 
 ## 4. Tools
 
-63 tools. Every one declares whether it reads, writes, or does something that cannot be undone, so your client can show you the difference before anything runs.
+65 tools. Every one declares whether it reads, writes, or does something that cannot be undone, so your client can show you the difference before anything runs.
 
 Every publication-scoped tool takes an optional `publication` argument to pick which connected Substack it acts on. See [section 7](#7-several-publications).
 
@@ -315,6 +315,8 @@ Two things about `export_subscribers`, both verified against the live API:
 | `get_user_profile` | read | Which account is connected |
 | `search_publications` | read | Find Substacks by name or topic. No auth needed |
 | `get_publication_info` | read | Public details of any publication |
+| `list_contributors` | read | Who can write on it, with byline ids |
+| `get_import_status` | read | Result of the last subscriber import |
 
 `update_publication_settings` names `accent_color` and `color_links` explicitly, because Substack stores them under opaque theme variable names, and `color_links` being off is the usual reason links render nearly invisible on a dark theme.
 
@@ -373,7 +375,7 @@ A careless call trips over that. An intentional one clears it in a single retry.
 "env": { "SUBSTACK_READ_ONLY": "1" }
 ```
 
-Drops the server to its 39 read tools. Write tools are not merely refused, they are not advertised, so the model never tries.
+Drops the server to its 41 read tools. Write tools are not merely refused, they are not advertised, so the model never tries.
 
 `SUBSTACK_ALLOW_DESTRUCTIVE=0` is the middle setting: drafting and tagging still work, publishing and deleting do not.
 
@@ -566,7 +568,7 @@ src/
   auth/        encrypted session store, the login command
   content/     markdown <-> ProseMirror, embeds, images
   subscribers/ the 48-column filter model
-  tools/       63 tools, grouped by subject
+  tools/       65 tools, grouped by subject
   transport/   stdio and HTTP
   safety.ts    the write guard
   scheduler.ts the local Note queue

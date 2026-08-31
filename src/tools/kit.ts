@@ -1,7 +1,7 @@
 /**
  * Shared plumbing every tool uses.
  *
- * Registering 63 tools by hand means 63 chances to forget an annotation, drop
+ * Registering 65 tools by hand means 65 chances to forget an annotation, drop
  * an error into a stack trace, or return a shape the model cannot read. This
  * wraps all of it once so a tool module only describes what it actually does.
  */
@@ -132,7 +132,7 @@ export function register(
     // The SDK derives its callback type from the schema generic. This wrapper is
     // generic over the same shape, but TypeScript cannot prove the two are equal
     // through the indirection, so the cast lives at this single boundary instead
-    // of in all 63 tool definitions.
+    // of in all 65 tool definitions.
     (async (args: Record<string, unknown>) => {
       try {
         if (spec.risk !== "read") {
