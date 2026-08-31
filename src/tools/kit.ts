@@ -82,12 +82,9 @@ export type ToolSpec<S extends ZodRawShape> = {
   risk: Risk;
   /** True when the effect is visible to anyone but you. */
   public?: boolean;
-  handler: (
-    args: z.objectOutputType<S, z.ZodTypeAny>,
-    ctx: ToolContext,
-  ) => Promise<unknown>;
+  handler: (args: z.infer<z.ZodObject<S>>, ctx: ToolContext) => Promise<unknown>;
   /** One line for the audit log, when this is a write. */
-  summary?: (args: z.objectOutputType<S, z.ZodTypeAny>) => string;
+  summary?: (args: z.infer<z.ZodObject<S>>) => string;
 };
 
 export function defineTool<S extends ZodRawShape>(spec: ToolSpec<S>): ToolSpec<S> {

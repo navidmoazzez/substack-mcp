@@ -53,7 +53,7 @@ accent_color and color_links are the two worth knowing about: Substack stores th
       subscribe_content: z.string().optional(),
       subscribe_footer: z.string().optional(),
       settings: z
-        .record(z.any())
+        .record(z.string(), z.any())
         .optional()
         .describe(
           "Any other publication field, passed through as given. Use this for a setting this tool does not name, such as block_ai_crawlers.",
