@@ -1,152 +1,100 @@
 # Substack MCP setup
 
-Substack is a newsletter and publishing platform. There is no official/public API — this MCP uses Substack's internal HTTP API, reverse-engineered from the web app.
+Substack has no public API. This server calls the same JSON endpoints Substack's own web app calls, signed with your browser session cookie.
 
-This MCP server lets you manage drafts, publish posts, send notes, view stats, manage subscribers, and more directly from Claude Code, Claude Desktop, Cursor, Windsurf, or any MCP-compatible client.
-
-3 discovery tools (search publications, scrape posts, get publication info) work with **zero setup** — no login needed. Everything else requires your session cookie.
-
-- [Substack](https://substack.com)
-
-## What you get
-
-1. **MCP server** (`index.mjs`) — connects your AI tools to Substack's internal API (30 tools)
-2. **Skill** (`SKILL.md` + `references/`) — teaches Claude how to use the server effectively (publishing workflows, note scheduling, stats analysis)
+Four discovery tools work with no login at all: `search_publications`, `get_publication_info`, `scrape_post` and `get_post` against a public publication. Everything else needs your session.
 
 ## Prerequisites
 
-- Node.js 18+
-- A Substack account (for authenticated tools)
+Node 20 or newer. Nothing else.
 
-## Step 1: Get your session credentials
-
-1. Log into [substack.com](https://substack.com) in your browser
-2. Open DevTools (F12 or Cmd+Option+I)
-3. Go to the **Network** tab
-4. Navigate to any page on your Substack dashboard
-5. Click any request to `substack.com/api/v1/...`
-6. In the **Headers** tab, find the `Cookie` header
-7. Copy the value after `connect.sid=` (up to the next semicolon)
-8. Your publication URL is `https://yourname.substack.com`
-9. For your user ID: find a response containing your user info, look for the `id` field (a number)
-
-The session token lasts for months as long as you don't log out.
-
-## Step 2: Install the MCP server
+## Install
 
 ```bash
-git clone https://github.com/thenavidm/substack-mcp.git
-cd substack-mcp
-npm install
+claude mcp add substack -- npx -y @thenavidm/substack-mcp
 ```
 
-## Step 3: Add to your client
-
-Replace `/path/to/substack-mcp` with the actual path where you cloned the repo.
-
-### Claude Code
-
-In `~/.claude.json` under `mcpServers`:
+Or in any client's MCP config:
 
 ```json
-"substack": {
-  "type": "stdio",
-  "command": "node",
-  "args": ["/path/to/substack-mcp/index.mjs"],
-  "env": {
-    "SUBSTACK_SESSION_TOKEN": "<your-connect.sid-value>",
-    "SUBSTACK_PUBLICATION_URL": "https://yourname.substack.com",
-    "SUBSTACK_USER_ID": "<your-user-id>"
+{
+  "mcpServers": {
+    "substack": {
+      "command": "npx",
+      "args": ["-y", "@thenavidm/substack-mcp"],
+      "env": {
+        "SUBSTACK_PUBLICATION_URL": "example.substack.com",
+        "SUBSTACK_SESSION_TOKEN": "your-connect-sid-value"
+      }
+    }
   }
 }
 ```
 
-### Claude Desktop
+## Getting the session token
 
-**macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
-**Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
+Your `connect.sid` cookie is full access to your Substack account. Treat it like a password. Never paste it into an issue or share it.
 
-```json
-"substack": {
-  "command": "node",
-  "args": ["/path/to/substack-mcp/index.mjs"],
-  "env": {
-    "SUBSTACK_SESSION_TOKEN": "<your-connect.sid-value>",
-    "SUBSTACK_PUBLICATION_URL": "https://yourname.substack.com",
-    "SUBSTACK_USER_ID": "<your-user-id>"
-  }
-}
-```
-
-Note: Desktop config does NOT use a `type` field.
-
-### Cursor
-
-In `.cursor/mcp.json` or `~/.cursor/mcp.json`:
-
-```json
-"substack": {
-  "command": "node",
-  "args": ["/path/to/substack-mcp/index.mjs"],
-  "env": {
-    "SUBSTACK_SESSION_TOKEN": "<your-connect.sid-value>",
-    "SUBSTACK_PUBLICATION_URL": "https://yourname.substack.com",
-    "SUBSTACK_USER_ID": "<your-user-id>"
-  }
-}
-```
-
-### Windsurf
-
-In `~/.codeium/windsurf/mcp_config.json`:
-
-```json
-"substack": {
-  "command": "node",
-  "args": ["/path/to/substack-mcp/index.mjs"],
-  "env": {
-    "SUBSTACK_SESSION_TOKEN": "<your-connect.sid-value>",
-    "SUBSTACK_PUBLICATION_URL": "https://yourname.substack.com",
-    "SUBSTACK_USER_ID": "<your-user-id>"
-  }
-}
-```
-
-### Other MCP clients
-
-- **Command:** `node /path/to/substack-mcp/index.mjs`
-- **Environment:** `SUBSTACK_SESSION_TOKEN`, `SUBSTACK_PUBLICATION_URL`, `SUBSTACK_USER_ID`
-- **Transport:** stdio
-
-## Step 4: Verify
-
-Discovery tools work without auth: `search_publications` with query "AI".
-
-For authenticated tools: `list_drafts` should return your drafts.
-
-## Step 5: Install the skill (recommended)
-
-The skill teaches Claude how to use Substack's tools effectively — publishing workflows, note scheduling, and stats analysis.
+### Fastest
 
 ```bash
-mkdir -p ~/.claude/skills/substack/references
-cp /path/to/substack-mcp/SKILL.md ~/.claude/skills/substack/
-cp /path/to/substack-mcp/references/* ~/.claude/skills/substack/references/
+npx @thenavidm/substack-mcp login
 ```
 
-For Claude Desktop, upload the skill through the Desktop interface.
+Prompts for the publication URL and the cookie, resolves your user id, and stores it encrypted in `~/.substack-mcp/session.json`. After that you can leave the `env` block out of your client config entirely.
 
-## Troubleshooting
+### From the browser you already have open
 
-If you get 401/403 errors, your session token has expired. Get a fresh `connect.sid` from your browser. Logging out invalidates the token.
+```bash
+npx @thenavidm/substack-mcp login --playwriter
+```
 
-If you hit rate limits (429), the server has a built-in 1 req/sec limiter. Wait a few minutes if you still get throttled.
+Reads the cookie out of your running Chrome. Needs [Playwriter](https://playwriter.dev) and its extension.
 
-If Notes tools fail, the Notes API is the most fragile part. Substack may change these endpoints without notice.
+### By launching a browser
 
-## Important notes
+```bash
+npm i -g playwright && npx playwright install chromium
+npx @thenavidm/substack-mcp login --playwright
+```
 
-- No official API — uses reverse-engineered internal endpoints
-- Session token (`connect.sid`) lasts months if you don't log out
-- 3 tools work without auth: `search_publications`, `scrape_post`, `get_publication_info`
-- Built-in rate limiter: 1 request per second
+Slowest by a distance. Use it on a machine with no Chrome, or in CI.
+
+### By hand
+
+1. Open your publication and sign in.
+2. DevTools, then Application, then Cookies.
+3. Copy the value of `connect.sid`. It starts with `s%3A`.
+
+Disable ad blockers first. Some strip the cookie from that panel.
+
+`SUBSTACK_USER_ID` is optional. It is looked up automatically and cached.
+
+## Verify
+
+```bash
+npx @thenavidm/substack-mcp doctor
+```
+
+Checks credentials, configuration, connectivity and byline resolution, and names whatever is wrong.
+
+## Safety settings
+
+| Variable | Effect |
+|---|---|
+| `SUBSTACK_READ_ONLY=1` | Only the 38 read tools are exposed |
+| `SUBSTACK_ALLOW_DESTRUCTIVE=0` | Drafting works, publishing and deleting do not |
+| `SUBSTACK_AUDIT_LOG=/path/to/log` | Append-only record of every attempted write |
+
+Irreversible actions require `confirm: true` regardless of these settings.
+
+## When it stops working
+
+Sessions expire at around 90 days. Run `login` again, or paste a fresh cookie.
+
+If you are on a custom domain and get a 403 mentioning `error code: 1010`, that is Cloudflare. Set `SUBSTACK_PUBLICATION_URL` to the canonical `*.substack.com` host instead.
+
+## Links
+
+- [Substack](https://substack.com)
+- [Repository](https://github.com/thenavidm/substack-mcp)

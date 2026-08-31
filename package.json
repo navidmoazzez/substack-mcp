@@ -1,31 +1,66 @@
 {
   "name": "@thenavidm/substack-mcp",
-  "version": "1.0.0",
-  "description": "MCP server for Substack. Manage posts, drafts, notes, subscribers, and analytics. Works with Claude Code, Claude Desktop, Cursor, Windsurf, and any MCP-compatible client.",
+  "version": "2.0.0",
+  "description": "MCP server for Substack. 62 tools for drafts, posts, Notes, subscribers, analytics, tags, comments, the reader feed, and competitor research. Works with Claude Code, Claude Desktop, Cursor, Windsurf, and any MCP-compatible client.",
   "type": "module",
+  "main": "./dist/index.js",
   "bin": {
-    "substack-mcp": "index.mjs"
+    "substack-mcp": "./dist/index.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "node dist/index.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.0.0",
-    "zod": "^3.22.0"
+    "@modelcontextprotocol/sdk": "^1.18.0",
+    "zod": "^3.23.8"
   },
-  "license": "AGPL-3.0",
-  "author": "Navid Moazzez",
-  "homepage": "https://navid.me",
+  "peerDependencies": {
+    "playwright": ">=1.40.0"
+  },
+  "peerDependenciesMeta": {
+    "playwright": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "typescript": "^5.7.0",
+    "vitest": "^2.1.0"
+  },
+  "license": "MIT",
+  "author": "Navid Moazzez <https://navid.me>",
+  "homepage": "https://github.com/thenavidm/substack-mcp",
   "repository": {
     "type": "git",
-    "url": "https://github.com/thenavidm/substack-mcp"
+    "url": "git+https://github.com/thenavidm/substack-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/thenavidm/substack-mcp/issues"
   },
   "keywords": [
     "mcp",
+    "model-context-protocol",
     "substack",
     "newsletter",
-    "mcp-server"
+    "mcp-server",
+    "claude",
+    "claude-code",
+    "ai-agents",
+    "llm-tools"
   ],
   "files": [
-    "index.mjs",
+    "dist",
     "README.md",
+    "SKILL.md",
     "LICENSE"
   ]
 }
