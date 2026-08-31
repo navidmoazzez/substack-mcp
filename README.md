@@ -34,8 +34,7 @@ Claude: Ranking your last 40 posts by paid signups.
 | 9 | [Your data](#9-your-data) | What is stored and where |
 | 10 | [Risks](#10-risks) | Read this before you install |
 | 11 | [Troubleshooting](#11-troubleshooting) | When something breaks |
-| 12 | [Running it 24/7](#12-running-it-247) | So scheduled Notes fire |
-| 13 | [Build from source](#13-build-from-source) | Contributing |
+| 12 | [Build from source](#12-build-from-source) | Contributing |
 
 ---
 
@@ -105,6 +104,24 @@ docker run -i --rm \
 
 Once a version is tagged, `ghcr.io/thenavidm/substack-mcp:latest` is published
 and can be used instead of building.
+
+### Self-hosting
+
+Only one thing needs this: `schedule_note` publishes from the machine the server
+runs on, so a Note queued for 9am fires at 9am only if that machine is awake.
+Everything else works fine on a laptop.
+
+If you want scheduling that does not depend on yours, run it somewhere always on:
+
+```bash
+substack-mcp --http --port=8788
+```
+
+It binds to `127.0.0.1` and serves `/health`. To reach it from elsewhere, set
+`SUBSTACK_MCP_HOST=0.0.0.0` and `SUBSTACK_MCP_TOKEN` to a random string, put it
+behind TLS, and add any extra origins to `SUBSTACK_MCP_ALLOWED_ORIGINS`. Bind
+beyond localhost without a token and it warns you, because anyone who reaches
+that port controls your Substack.
 
 ### Check it worked
 
@@ -219,7 +236,7 @@ Notes have no draft state on Substack. Writing one publishes it, immediately and
 | `list_notes` | read | Notes you have published |
 | `delete_note` | **destructive** | Permanent. Needs `confirm` |
 
-Substack does not schedule Notes, so the queue is kept locally and this server publishes each one when it comes due. **That only happens while the server is running.** A Note set for 9am fires at 9am if your machine is awake with your client open, and otherwise on the next start after that time, flagged as published late. Nothing is ever dropped. For scheduling that does not depend on your laptop, see [section 12](#12-running-it-247).
+Substack does not schedule Notes, so the queue is kept locally and this server publishes each one when it comes due. **That only happens while the server is running.** A Note set for 9am fires at 9am if your machine is awake with your client open, and otherwise on the next start after that time, flagged as published late. Nothing is ever dropped. For scheduling that does not depend on your laptop, see [self-hosting](#self-hosting).
 
 ### Subscribers
 
@@ -531,47 +548,7 @@ Run `npx @thenavidm/substack-mcp doctor` first. It checks credentials, config, c
 
 ---
 
-## 12. Running it 24/7
-
-Scheduled Notes only fire while the server runs. To make that not depend on your laptop, run it over HTTP somewhere always on.
-
-```bash
-substack-mcp --http --port=8788
-```
-
-Binds to `127.0.0.1` by default. `/health` reports tool count and publication count.
-
-To reach it from elsewhere:
-
-```bash
-SUBSTACK_MCP_HOST=0.0.0.0 \
-SUBSTACK_MCP_TOKEN=$(openssl rand -hex 32) \
-SUBSTACK_MCP_ALLOWED_ORIGINS=https://claude.ai \
-substack-mcp --http
-```
-
-`Origin` is validated so a web page you visit cannot drive your local server, and a bearer token is required when set. Bind beyond localhost with no token and it warns you loudly, because anyone who can reach that port controls your Substack.
-
-A bearer token is a lock on one door, not a security model. Put it behind TLS.
-
-### Docker
-
-```bash
-docker run -d --restart=unless-stopped \
-  -p 127.0.0.1:8788:8788 \
-  -e SUBSTACK_PUBLICATION_URL=example.substack.com \
-  -e SUBSTACK_SESSION_TOKEN=your-token \
-  -e SUBSTACK_MCP_HOST=0.0.0.0 \
-  -e SUBSTACK_MCP_HOME=/data \
-  -v substack-mcp:/data \
-  substack-mcp --http
-```
-
-The volume keeps the scheduled-Note queue across restarts.
-
----
-
-## 13. Build from source
+## 12. Build from source
 
 ```bash
 git clone https://github.com/thenavidm/substack-mcp.git
