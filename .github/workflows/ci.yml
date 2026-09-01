@@ -35,64 +35,8 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
-      - name: Server starts and lists every tool
-        env:
-          SUBSTACK_PUBLICATION_URL: example.substack.com
-          SUBSTACK_SESSION_TOKEN: ci-placeholder
-          SUBSTACK_MCP_HOME: /tmp/substack-mcp-ci
-        run: |
-          printf '%s\n%s\n' \
-            '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"ci","version":"1"}}}' \
-            '{"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}' \
-            | node dist/index.js 2>/dev/null \
-            | node -e '
-              let raw = "";
-              process.stdin.on("data", c => raw += c);
-              process.stdin.on("end", () => {
-                const listed = raw.trim().split("\n")
-                  .map(l => JSON.parse(l))
-                  .find(m => m.id === 2);
-                const count = listed?.result?.tools?.length ?? 0;
-                console.log(`tools: ${count}`);
-                if (count !== 65) {
-                  console.error(`expected 65 tools, got ${count}`);
-                  process.exit(1);
-                }
-                const unannotated = listed.result.tools.filter(
-                  t => t.annotations?.readOnlyHint === undefined
-                );
-                if (unannotated.length) {
-                  console.error("unannotated: " + unannotated.map(t => t.name).join(", "));
-                  process.exit(1);
-                }
-              });
-            '
-      - name: Read-only mode hides every write
-        env:
-          SUBSTACK_PUBLICATION_URL: example.substack.com
-          SUBSTACK_SESSION_TOKEN: ci-placeholder
-          SUBSTACK_READ_ONLY: "1"
-          SUBSTACK_MCP_HOME: /tmp/substack-mcp-ci
-        run: |
-          printf '%s\n%s\n' \
-            '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"ci","version":"1"}}}' \
-            '{"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}' \
-            | node dist/index.js 2>/dev/null \
-            | node -e '
-              let raw = "";
-              process.stdin.on("data", c => raw += c);
-              process.stdin.on("end", () => {
-                const listed = raw.trim().split("\n")
-                  .map(l => JSON.parse(l))
-                  .find(m => m.id === 2);
-                const writes = listed.result.tools.filter(t => !t.annotations.readOnlyHint);
-                if (writes.length) {
-                  console.error("writes exposed in read-only mode: " + writes.map(t => t.name).join(", "));
-                  process.exit(1);
-                }
-                console.log(`read-only tools: ${listed.result.tools.length}`);
-              });
-            '
+      - name: Server starts, and every document agrees with it
+        run: npm run check:counts
 
   docker:
     runs-on: ubuntu-latest
