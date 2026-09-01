@@ -70,8 +70,14 @@ describe("annotations", () => {
       readOnlyHint: true,
       destructiveHint: false,
       idempotentHint: true,
-      openWorldHint: false,
+      // Every call in this server reaches Substack, reads included.
+      openWorldHint: true,
     });
+  });
+
+  it("marks a reversible write idempotent, an irreversible one not", () => {
+    expect(annotationsFor("write").idempotentHint).toBe(true);
+    expect(annotationsFor("destructive").idempotentHint).toBe(false);
   });
 
   it("never leaves destructiveHint to the MCP default of true on a read", () => {
@@ -85,10 +91,13 @@ describe("annotations", () => {
     expect(a.destructiveHint).toBe(true);
     expect(a.readOnlyHint).toBe(false);
     expect(a.openWorldHint).toBe(true);
+    expect(a.idempotentHint).toBe(false);
   });
 
-  it("lets a private write opt out of openWorldHint", () => {
-    expect(annotationsFor("write", { public: false }).openWorldHint).toBe(false);
+  it("sets openWorldHint on everything, because every call leaves the machine", () => {
+    for (const risk of ["read", "write", "destructive"] as const) {
+      expect(annotationsFor(risk).openWorldHint, risk).toBe(true);
+    }
   });
 });
 

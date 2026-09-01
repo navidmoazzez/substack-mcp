@@ -1,10 +1,6 @@
 # Substack MCP
 
-Give any AI agent full control of your Substack. Write and publish posts, work your subscriber list, read your analytics, and study what is working for other writers, from Claude, Cursor, or any MCP client.
-
-65 tools. No API key, because Substack does not have a public API. Your session stays on your machine.
-
-Built by [Navid Moazzez](https://navid.me).
+Give any AI agent real access to your Substack: writing and publishing posts, working your subscriber list, reading your analytics, and studying what is working for other writers.
 
 ```
 You: which of my posts actually converted free readers to paid?
@@ -19,24 +15,28 @@ Claude: Ranking your last 40 posts by paid signups.
   Your five worst converters are all essays with abstract titles.
 ```
 
-## Contents
+Built by [Navid Moazzez](https://navid.me).
+
+## Contents 📑
 
 | | Section | |
 |---|---|---|
 | 1 | [What you can ask it](#1-what-you-can-ask-it) | Real prompts, not features |
-| 2 | [Install](#2-install) | Every client, copy and paste |
-| 3 | [Connect your account](#3-connect-your-account) | Three ways, fastest first |
-| 4 | [Tools](#4-tools) | All 65, with arguments |
-| 5 | [Writing safely](#5-writing-safely) | Why publishing asks twice |
-| 6 | [Writing posts](#6-writing-posts) | Markdown, embeds, paywalls |
-| 7 | [Your data](#7-your-data) | What is stored and where |
-| 8 | [Troubleshooting](#8-troubleshooting) | When something breaks |
+| 2 | [Quick install](#2-quick-install) | One line, no account needed |
+| 3 | [Setup](#3-setup) | Getting your session cookie |
+| 4 | [Connect your client](#4-connect-your-client) | Claude, Cursor, Windsurf, the rest |
+| 5 | [Check it worked](#5-check-it-worked) | And the two things that fail |
+| 6 | [Tools](#6-tools) | All 65, grouped by what they reach |
+| 7 | [Writing safely](#7-writing-safely) | What is guarded and what is not |
+| 8 | [Writing posts](#8-writing-posts) | Markdown, embeds, paywalls |
+| 9 | [Your data](#9-your-data) | What is stored, and where |
+| 10 | [Troubleshooting](#10-troubleshooting) | When something breaks |
 | | [FAQ](#faq) | The questions people actually ask |
 
 
 ---
 
-## 1. What you can ask it
+## 1. What you can ask it 💬
 
 - Draft this week's post from my notes, in the voice of my last five.
 - Which of my posts got the most paid conversions, and what do they have in common?
@@ -54,191 +54,36 @@ The last one is the point. It reads your existing posts, writes a new draft in y
 
 ---
 
-## 2. Install
+---
+
+## 2. Quick install ⚡
 
 Node 20 or newer. Nothing else.
 
-### Claude Code
-
-One line, from anywhere in a terminal:
-
 ```bash
-claude mcp add substack \
-  -e SUBSTACK_PUBLICATION_URL=example.substack.com \
-  -e SUBSTACK_SESSION_TOKEN=your-connect-sid-value \
-  -- npx -y @thenavidm/substack-mcp@latest
+npx -y @thenavidm/substack-mcp@latest --version
 ```
 
-Then run `/mcp` inside Claude Code. `substack` should be listed as connected.
+That is the whole install. `npx` fetches it on demand, so there is nothing to update later.
 
-To remove it later: `claude mcp remove substack`.
+Installing the package needs no account. Only connecting it does, which is the next section.
 
-### Claude Desktop
+### Before you start
 
-**1. Open the config file.**
+| You need | Check with | If missing |
+|---|---|---|
+| Node 20 or newer | `node -v` | [nodejs.org](https://nodejs.org) |
+| A Substack publication you own | Open your publication's dashboard | Start one at [substack.com](https://substack.com), it is free |
+| Its canonical address | It ends `.substack.com` | Custom domains do not serve the API, see below |
 
-In Claude Desktop, go to **Settings**, then **Developer**, then click **Edit Config**. That reveals `claude_desktop_config.json` in your file manager. Open it in any text editor.
+> [!IMPORTANT]
+> Use the `yourname.substack.com` address, not a custom domain. Substack does not
+> serve its API on custom domains: the request redirects and ends in a 404.
 
-If you would rather go straight there:
-
-| | |
-|---|---|
-| macOS | `~/Library/Application Support/Claude/claude_desktop_config.json` |
-| Windows | `%APPDATA%\Claude\claude_desktop_config.json` |
-| Linux | `~/.config/Claude/claude_desktop_config.json` |
-
-On macOS you can open it from a terminal with:
-
-```bash
-open -e ~/Library/Application\ Support/Claude/claude_desktop_config.json
-```
-
-**2. Add the server.**
-
-If the file is empty or does not exist, paste this whole thing in:
-
-```json
-{
-  "mcpServers": {
-    "substack": {
-      "command": "npx",
-      "args": ["-y", "@thenavidm/substack-mcp@latest"],
-      "env": {
-        "SUBSTACK_PUBLICATION_URL": "example.substack.com",
-        "SUBSTACK_SESSION_TOKEN": "your-connect-sid-value"
-      }
-    }
-  }
-}
-```
-
-If you already have other servers, add only the `"substack": { ... }` part inside your existing `"mcpServers"`, and put a comma after the entry before it. The file has to stay valid JSON. A single missing comma or trailing comma stops every server from loading, not just this one.
-
-Replace `example.substack.com` with your own publication, and `your-connect-sid-value` with your session cookie. [Section 3](#3-connect-your-account) covers where to find it.
-
-**3. Restart properly.**
-
-Quit Claude Desktop completely and reopen it. On macOS closing the window is not enough, use **Cmd+Q**. On Windows quit it from the system tray. Claude only reads that file at startup.
-
-**4. Check it worked.**
-
-Look for the tools icon in the message box and click it. You should see `substack` with its tools listed. Then ask:
-
-> How many Substack subscribers do I have?
-
-If nothing appears, see [Troubleshooting](#11-troubleshooting). Claude Desktop's own logs are the fastest way in:
-
-| | |
-|---|---|
-| macOS | `~/Library/Logs/Claude/mcp-server-substack.log` |
-| Windows | `%APPDATA%\Claude\logs\mcp-server-substack.log` |
-
-```bash
-tail -n 50 ~/Library/Logs/Claude/mcp-server-substack.log
-```
-
-Two things account for most failures. Node is not installed or not on the PATH that Claude Desktop sees, in which case use the full path to `node` as the `command`. Or the JSON is malformed, which you can check by pasting the file into any JSON validator.
-
-### Cursor
-
-Create `~/.cursor/mcp.json` for every project, or `.cursor/mcp.json` inside a single project. Use the same JSON as Claude Desktop. Then reload the window, or open **Settings**, **MCP**, and toggle the server.
-
-### Windsurf
-
-`~/.codeium/windsurf/mcp_config.json`, same JSON, then reload.
-
-### VS Code
-
-`.vscode/mcp.json` in a project, or run **MCP: Add Server** from the command palette.
-
-### Everything else
-
-Zed, Cline, Continue and anything else that speaks MCP over stdio all work. They each keep their config somewhere different, but they all want the same three things: the `command` (`npx`), the `args`, and the `env` with your publication and token.
-
-### Docker
-
-```bash
-docker build -t substack-mcp .
-docker run -i --rm \
-  -e SUBSTACK_PUBLICATION_URL=example.substack.com \
-  -e SUBSTACK_SESSION_TOKEN=your-token \
-  substack-mcp
-```
-
-Once a version is tagged, `ghcr.io/navidmoazzez/substack-mcp:latest` is published
-and can be used instead of building.
-
-### Self-hosting
-
-Only one thing needs this: `schedule_note` publishes from the machine the server
-runs on, so a Note queued for 9am fires at 9am only if that machine is awake.
-Everything else works fine on a laptop.
-
-If you want scheduling that does not depend on yours, run it somewhere always on:
-
-```bash
-substack-mcp --http --port=8788
-```
-
-It binds to `127.0.0.1` and serves `/health`. To reach it from elsewhere, set
-`SUBSTACK_MCP_HOST=0.0.0.0` and `SUBSTACK_MCP_TOKEN` to a random string, put it
-behind TLS, and add any extra origins to `SUBSTACK_MCP_ALLOWED_ORIGINS`. Bind
-beyond localhost without a token and it warns you, because anyone who reaches
-that port controls your Substack.
-
-### Check it worked
-
-```bash
-npx @thenavidm/substack-mcp@latest doctor
-```
-
-`doctor` runs the checks in order and names the actual problem, rather than leaving you to guess which of six things is wrong.
-
----
-### Run it from source
-
-Until it is on npm, this is how you install it. It is also how you read the code.
-
-```bash
-git clone https://github.com/navidmoazzez/substack-mcp.git
-cd substack-mcp
-bash deploy/install.sh
-```
-
-That installs, builds, runs the tests, and registers it with Claude Code if you
-have it. Set `SUBSTACK_PUBLICATION_URL` and `SUBSTACK_SESSION_TOKEN` first and it
-registers them for you, then runs `doctor` to check.
-
-By hand instead:
-
-```bash
-npm install
-npm run build
-```
-
-That produces `dist/index.js`. Point any client at it with `"command": "node"` and `"args": ["/full/path/to/substack-mcp/dist/index.js"]`, then follow [section 3](#3-connect-your-account) as normal.
-
-`npm test` runs the suite. `npm run typecheck` checks types without building.
-
-```
-src/
-  api/         one HTTP client, typed errors, identity resolution
-  auth/        encrypted session store, the login command
-  content/     markdown <-> ProseMirror, embeds, images
-  subscribers/ the 48-column filter model
-  tools/       65 tools, grouped by subject
-  transport/   stdio and HTTP
-  safety.ts    the write guard
-  scheduler.ts the local Note queue
-```
-
-Every tool is one `defineTool` call. Guarding, annotations, error handling and publication selection are applied centrally, so a tool file only describes what it does.
 
 ---
 
----
-
-## 3. Connect your account
+## 3. Setup 🔑
 
 Substack has no public API and no OAuth. Everything here runs on your browser session cookie, exactly like the Substack tab you already have open.
 
@@ -291,11 +136,120 @@ Sessions do expire, commonly reported at around 90 days, though I have not measu
 
 ---
 
-## 4. Tools
+---
+
+## 4. Connect your client 🔌
+
+Every block below is complete on its own. Pick your client, paste, done.
+
+Replace `example.substack.com` with your publication and `your-connect-sid-value` with the cookie from [section 3](#3-setup).
+
+### Claude Code
+
+```bash
+claude mcp add substack \
+  -e SUBSTACK_PUBLICATION_URL=example.substack.com \
+  -e SUBSTACK_SESSION_TOKEN=your-connect-sid-value \
+  -- npx -y @thenavidm/substack-mcp@latest
+```
+
+Run `/mcp` inside Claude Code and `substack` should be listed. Remove it later with `claude mcp remove substack`.
+
+### Claude Desktop
+
+Open **Settings**, then **Developer**, then **Edit Config**. That reveals `claude_desktop_config.json`. Or go straight there:
+
+| | |
+|---|---|
+| macOS | `~/Library/Application Support/Claude/claude_desktop_config.json` |
+| Windows | `%APPDATA%\Claude\claude_desktop_config.json` |
+| Linux | `~/.config/Claude/claude_desktop_config.json` |
+
+```json
+{
+  "mcpServers": {
+    "substack": {
+      "command": "npx",
+      "args": ["-y", "@thenavidm/substack-mcp@latest"],
+      "env": {
+        "SUBSTACK_PUBLICATION_URL": "example.substack.com",
+        "SUBSTACK_SESSION_TOKEN": "your-connect-sid-value"
+      }
+    }
+  }
+}
+```
+
+If the file already has other servers, add only the `"substack"` block inside `"mcpServers"` and put a comma after the entry before it. One bad comma stops every server loading, not just this one.
+
+Then quit Claude Desktop completely and reopen it. On macOS use **Cmd+Q**, closing the window is not enough. It only reads that file at startup.
+
+> [!TIP]
+> Claude Desktop does not inherit your shell PATH, so if `npx` is not found, run
+> `which npx` and use that absolute path as `command`.
+
+### Cursor
+
+`~/.cursor/mcp.json` for every project, or `.cursor/mcp.json` inside one. Same JSON as above. Reload the window afterwards.
+
+### Windsurf
+
+`~/.codeium/windsurf/mcp_config.json`. Same JSON. Reload afterwards.
+
+### VS Code
+
+`.vscode/mcp.json` in a project, or run **MCP: Add Server** from the command palette.
+
+### Anything else
+
+Zed, Cline, Continue and any other MCP client over stdio all work. They each want the same three things: `command`, `args`, and `env`.
+
+### Docker
+
+```bash
+docker run -i --rm \
+  -e SUBSTACK_PUBLICATION_URL=example.substack.com \
+  -e SUBSTACK_SESSION_TOKEN=your-connect-sid-value \
+  ghcr.io/navidmoazzez/substack-mcp:latest
+```
+
+### Self-hosted over HTTP
+
+Only one thing needs this: `schedule_note` publishes from the machine the server runs on, so a Note queued for 9am fires only if that machine is awake. Everything else is fine on a laptop.
+
+```bash
+substack-mcp --http --port=8788
+```
+
+It binds to `127.0.0.1` and serves `/health`. To reach it from elsewhere set `SUBSTACK_MCP_HOST=0.0.0.0` and `SUBSTACK_MCP_TOKEN` to a random string, and put it behind TLS.
+
+> [!CAUTION]
+> The HTTP transport holds a live credential for your Substack account. Binding it
+> beyond localhost without a token hands your account to anyone who finds the port.
+
+
+---
+
+## 5. Check it worked 🩺
+
+```bash
+npx @thenavidm/substack-mcp@latest doctor
+```
+
+`doctor` runs the checks in order and names the actual problem, rather than leaving you to guess which of six things is wrong.
+
+---
+
+Two things account for almost every failure. Node is not on the PATH your client sees, which the tip above covers. Or the session cookie is wrong or expired, which `doctor` names directly.
+
+
+---
+
+## 6. Tools 🛠️
 
 65 tools. Every one declares whether it reads, writes, or does something that cannot be undone, so your client can show you the difference before anything runs.
 
-Every publication-scoped tool takes an optional `publication` argument to pick which connected Substack it acts on. See [section 7](#7-several-publications).
+Every publication-scoped tool takes an optional `publication` argument to pick which connected Substack it acts on. See [section 7](#several-publications).
 
 ### Drafts
 
@@ -343,7 +297,7 @@ Notes have no draft state on Substack. Writing one publishes it, immediately and
 | `list_notes` | read | Notes you have published |
 | `delete_note` | **destructive** | Permanent. Needs `confirm` |
 
-Substack does not schedule Notes, so the queue is kept locally and this server publishes each one when it comes due. **That only happens while the server is running.** A Note set for 9am fires at 9am if your machine is awake with your client open, and otherwise on the next start after that time, flagged as published late. Nothing is ever dropped. For scheduling that does not depend on your laptop, see [self-hosting](#self-hosting).
+Substack does not schedule Notes, so the queue is kept locally and this server publishes each one when it comes due. **That only happens while the server is running.** A Note set for 9am fires at 9am if your machine is awake with your client open, and otherwise on the next start after that time, flagged as published late. Nothing is ever dropped. For scheduling that does not depend on your laptop, see [self-hosting](#self-hosted-over-http).
 
 ### Subscribers
 
@@ -478,7 +432,9 @@ Ask for a publication that is not connected and the error names the ones that ar
 
 ---
 
-## 5. Writing safely
+---
+
+## 7. Writing safely 🔒
 
 Two positions are common and both are wrong. Ship `publish` and `delete` unguarded, and one mis-parsed instruction emails your entire list. Remove them and call that safety, and you have not made anything safer, you have moved the work back to the human.
 
@@ -536,7 +492,9 @@ Several tools return text other people wrote: comments, your reader feed, anothe
 
 ---
 
-## 6. Writing posts
+---
+
+## 8. Writing posts ✍️
 
 `draft_body` is **not HTML**. It is a JSON ProseMirror document. This is the single most common way a Substack integration goes wrong: send HTML and the API returns 200, then the post renders with the tags visible as literal text. There is no error. You find out by looking at the published post.
 
@@ -586,7 +544,9 @@ Substack's document format has no table node, so a table cannot be rendered nati
 
 ---
 
-## 7. Your data
+---
+
+## 9. Your data 💾
 
 Nothing is sent anywhere except Substack. There is no telemetry, no analytics, and no third-party service in the path.
 
@@ -642,7 +602,9 @@ Errors map to typed classes, so the message names the fix rather than saying "Su
 
 ---
 
-## 8. Troubleshooting
+---
+
+## 10. Troubleshooting 🔧
 
 Run `npx @thenavidm/substack-mcp@latest doctor` first. It checks credentials, config, connectivity and byline resolution, and names what is wrong.
 
@@ -686,7 +648,32 @@ Some custom domains sit behind Cloudflare, which can answer 403 with `error code
 
 ---
 
-## FAQ
+### Environment variables
+
+| Variable | Default | What it does |
+|---|---|---|
+| `SUBSTACK_PUBLICATION_URL` | | Your publication, e.g. `example.substack.com` |
+| `SUBSTACK_SESSION_TOKEN` | | The `connect.sid` cookie value |
+| `SUBSTACK_USER_ID` | resolved | Your numeric user id |
+| `SUBSTACK_PUBLICATIONS` | | JSON array, for several publications |
+| `SUBSTACK_READ_ONLY` | `0` | Disable every write |
+| `SUBSTACK_ALLOW_DESTRUCTIVE` | `1` | Allow publish and delete |
+| `SUBSTACK_AUDIT_LOG` | | Append-only log of attempted writes |
+| `SUBSTACK_REQUEST_TIMEOUT_MS` | `30000` | Per-request deadline |
+| `SUBSTACK_MIN_REQUEST_INTERVAL_MS` | `350` | Minimum spacing between requests |
+| `SUBSTACK_MAX_RETRIES` | `3` | Retries on 429 and 5xx |
+| `SUBSTACK_USER_AGENT` | Chrome | Override the browser signature |
+| `SUBSTACK_MCP_HOME` | `~/.substack-mcp` | Where session and queue live |
+| `SUBSTACK_MCP_HOST` | `127.0.0.1` | HTTP bind address |
+| `SUBSTACK_MCP_PORT` | `8788` | HTTP port |
+| `SUBSTACK_MCP_TOKEN` | | Bearer token for HTTP |
+| `SUBSTACK_MCP_ALLOWED_ORIGINS` | | Extra origins beyond localhost |
+
+---
+
+---
+
+## FAQ ❓
 
 ### What is an MCP server?
 
@@ -698,11 +685,11 @@ Substack is a publishing platform for newsletters and blogs. Writers publish pos
 
 ### Do I need to be technical to use this?
 
-You need to be able to paste a line into a terminal and copy a value out of your browser. That is the whole skill requirement. [Section 3](#3-connect-your-account) walks through the browser part click by click, and `doctor` tells you what is wrong in plain language if something does not work.
+You need to be able to paste a line into a terminal and copy a value out of your browser. That is the whole skill requirement. [Section 3](#3-setup) walks through the browser part click by click, and `doctor` tells you what is wrong in plain language if something does not work.
 
 ### Is my data sent anywhere? Who can see it?
 
-Nothing goes anywhere except Substack. There is no backend, no telemetry, and no third party in the path. Your session cookie and any queued Notes sit in `~/.substack-mcp` on your own machine, and [section 7](#7-your-data) says exactly what is in each file.
+Nothing goes anywhere except Substack. There is no backend, no telemetry, and no third party in the path. Your session cookie and any queued Notes sit in `~/.substack-mcp` on your own machine, and [section 7](#9-your-data) says exactly what is in each file.
 
 ### What can it do that I cannot do in the Substack dashboard already?
 
@@ -718,7 +705,7 @@ It costs nothing. The server is MIT licensed and free, and it talks to your exis
 
 ### Does it work with ChatGPT or Cursor, or only Claude?
 
-It works with any client that speaks MCP. Claude Code, Claude Desktop, Cursor, Windsurf, VS Code, Zed and Cline are all covered in [section 2](#2-install), and anything else that supports MCP over stdio will work with the same three settings.
+It works with any client that speaks MCP. Claude Code, Claude Desktop, Cursor, Windsurf, VS Code, Zed and Cline are all covered in [section 2](#2-quick-install), and anything else that supports MCP over stdio will work with the same three settings.
 
 ### Can I connect more than one publication?
 
@@ -735,7 +722,9 @@ Remove the server from your client's config, which for Claude Code is `claude mc
 
 ---
 
-## About the author
+---
+
+## About the author 👋
 
 Navid Moazzez is a leading AI business strategist, and the host of the AI Creator Summit, watched by 100,000+ creators. He helps creators and founders master AI and build their own AI Operating System (AI OS) to automate their business and life. This Substack MCP server is one piece of that system.
 
@@ -749,7 +738,7 @@ Navid Moazzez is a leading AI business strategist, and the host of the AI Creato
 - Instagram: [@thenavidm](https://instagram.com/thenavidm)
 - LinkedIn: [thenavidm](https://linkedin.com/in/thenavidm)
 
-## Dependencies
+## Dependencies 📦
 
 | Library | Licence | What it does |
 |---|---|---|
@@ -757,10 +746,12 @@ Navid Moazzez is a leading AI business strategist, and the host of the AI Creato
 | [zod](https://github.com/colinhacks/zod) | MIT | Tool argument schemas and validation |
 
 [Playwright](https://github.com/microsoft/playwright) is an optional peer dependency, used only by `login --playwright` and never loaded by the server.
-## Security
+
+## Security 🛡️
 
 Found a vulnerability? [Report it privately](https://github.com/navidmoazzez/substack-mcp/security/advisories/new), not as a public issue. [SECURITY.md](SECURITY.md) covers what this server holds, the write-safety model, and running it over HTTP.
-## License
+
+## License ⚖️
 
 [MIT](./LICENSE). Free to use, modify, and share.
 

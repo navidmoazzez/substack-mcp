@@ -126,7 +126,7 @@ export function register(
       inputSchema: spec.schema,
       annotations: {
         title: spec.title,
-        ...annotationsFor(spec.risk, { public: spec.public }),
+        ...annotationsFor(spec.risk),
       },
     },
     // The SDK derives its callback type from the schema generic. This wrapper is

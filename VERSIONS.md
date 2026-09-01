@@ -2,7 +2,26 @@
 
 | Component | Version | Last Updated |
 |-----------|---------|--------------|
-| substack-mcp | 2.0.3 | 2026-09-01 |
+| substack-mcp | 2.1.0 | 2026-09-01 |
+
+---
+
+## 2.1.0
+
+Brought in line with the repo standard, which it was not following.
+
+`openWorldHint` is now true on every tool. Every call in this server reaches
+Substack, reads included, so the old conditional was wrong. `idempotentHint` now
+marks reversible writes as idempotent and only irreversible ones as not.
+
+The README follows the standard section order: what you can ask it, quick
+install, setup, connect your client, check it worked, then the rest, with the FAQ
+before the About block. Installing the package no longer appears to need
+credentials you have not been told how to get yet.
+
+Added `AGENTS.md` and `CLAUDE.md` for agents working on the repo, which were
+missing. The LICENSE holder is corrected. Every internal anchor and external link
+in the README was checked and four broken ones fixed.
 
 ---
 

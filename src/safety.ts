@@ -107,13 +107,15 @@ export class WriteGuard {
  */
 export function annotationsFor(
   risk: Risk,
-  opts: { public?: boolean } = {},
 ): { readOnlyHint: boolean; destructiveHint: boolean; idempotentHint: boolean; openWorldHint: boolean } {
   return {
     readOnlyHint: risk === "read",
     destructiveHint: risk === "destructive",
-    idempotentHint: risk === "read",
-    // True when the effect is visible outside your own private drafts.
-    openWorldHint: opts.public ?? risk === "destructive",
+    // A read is repeatable. So is a reversible write, like tagging a post twice.
+    // An irreversible one is not: publishing again is a second post.
+    idempotentHint: risk !== "destructive",
+    // Always true. Every call in this server leaves the machine and reaches
+    // Substack, including the reads.
+    openWorldHint: true,
   };
 }
