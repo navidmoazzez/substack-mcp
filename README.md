@@ -2,7 +2,9 @@
 
 # Substack MCP
 
-Substack has no public API. That is why your AI assistant cannot see your drafts, your subscribers or your numbers, and why most things claiming to connect to it publish posts with the HTML tags showing.
+Substack MCP server for Claude Code and AI agents. 65 tools for drafts, posts, Notes, subscribers, analytics, tags, comments, and researching other writers.
+
+Substack has no public API, which is why your assistant cannot see any of it, and why most things that claim to connect publish posts with the HTML tags showing.
 
 This one speaks Substack's own document format. Ask for a draft and you get a draft, with the YouTube link as a player and the paywall where you put it.
 
@@ -37,8 +39,6 @@ Built by [Navid Moazzez](https://navid.me).
 | 10 | [Troubleshooting](#10-troubleshooting) | When something breaks |
 | | [FAQ](#faq) | The questions people actually ask |
 
----
-
 ## 1. What you can ask it 💬
 
 - Draft this week's post from my notes, in the voice of my last five.
@@ -52,8 +52,6 @@ Built by [Navid Moazzez](https://navid.me).
 - Turn my last three posts into a guide, and put the YouTube version at the top.
 
 The last one is the point. It reads your existing posts, writes a new draft in your format, and embeds the video as a real player rather than a blue link, because it speaks Substack's document format rather than pasting HTML at it.
-
----
 
 ## 2. Quick install ⚡
 
@@ -78,8 +76,6 @@ Installing the package needs no account. Only connecting it does, which is the n
 > [!IMPORTANT]
 > Use the `yourname.substack.com` address, not a custom domain. Substack does not
 > serve its API on custom domains: the request redirects and ends in a 404.
-
----
 
 ## 3. Setup 🔑
 
@@ -129,8 +125,6 @@ Nothing above is required. Set `SUBSTACK_PUBLICATION_URL` and `SUBSTACK_SESSION_
 ### When it expires
 
 Sessions do expire, commonly reported at around 90 days, though I have not measured it. When calls start failing with an authentication error, run `login` again, or paste a fresh cookie. `doctor` warns you once a stored session passes 75 days.
-
----
 
 ## 4. Connect your client 🔌
 
@@ -221,8 +215,6 @@ It binds to `127.0.0.1` and serves `/health`. To reach it from elsewhere set `SU
 > The HTTP transport holds a live credential for your Substack account. Binding it
 > beyond localhost without a token hands your account to anyone who finds the port.
 
----
-
 ## 5. Check it worked 🩺
 
 ```bash
@@ -231,11 +223,7 @@ npx @thenavidm/substack-mcp@latest doctor
 
 `doctor` runs the checks in order and names the actual problem, rather than leaving you to guess which of six things is wrong.
 
----
-
 Two things account for almost every failure. Node is not on the PATH your client sees, which the tip above covers. Or the session cookie is wrong or expired, which `doctor` names directly.
-
----
 
 ## 6. Tools 🛠️
 
@@ -408,8 +396,6 @@ Takes exactly one of `url` or `path`. PNG, JPEG, GIF and WebP up to 10MB. The ty
 ### Resources and prompts
 
 Beyond tools, the server exposes two MCP resources (`substack://publication` and `substack://connected`) so a client can load your publication's context without spending a tool call, and four prompts: **Draft a post from an idea**, **Find what worked**, **Study another writer**, and **Find lapsed subscribers**.
-
----
 ### Several publications
 
 One Substack login often owns more than one publication.
@@ -423,8 +409,6 @@ One Substack login often owns more than one publication.
 Every publication-scoped tool takes an optional `publication` argument, matched loosely against the hostname, so `"two"` finds `two.substack.com`. Leave it out and the first one is used.
 
 Ask for a publication that is not connected and the error names the ones that are, rather than failing silently against the wrong Substack.
-
----
 
 ## 7. Writing safely 🔒
 
@@ -476,8 +460,6 @@ An agent that can read that text and also publish is exposed to instructions hid
 Two things push back on that. Every one of those tools says so in its own response, and the server's instructions tell the model to treat that text as data rather than orders.
 
 Neither is complete. The real defence for an agent working unattended is `SUBSTACK_READ_ONLY=1`, which removes the write tools entirely.
-
----
 ### Risks worth knowing
 
 **This uses an undocumented API.**
@@ -507,8 +489,6 @@ If you are pointing an autonomous agent at this, run it with `SUBSTACK_READ_ONLY
 Automating your own account through its own web endpoints is not something Substack documents or blesses.
 
 I am not aware of anyone being banned for it. I cannot promise it, and neither can anyone else shipping a tool like this.
-
----
 
 ## 8. Writing posts ✍️
 
@@ -556,8 +536,6 @@ Substack's document format has no table node, so a table cannot be rendered nati
 
 `preview_draft_body` shows exactly what a body will produce, including how many embeds were created and whether the paywall registered, without touching anything.
 
----
-
 ## 9. Your data 💾
 
 Nothing is sent anywhere except Substack. There is no telemetry, no analytics, and no third-party service in the path.
@@ -575,8 +553,6 @@ That is the same exposure as the environment variable path, which is why environ
 **`scheduled-notes.json`**, the local queue for `schedule_note`. Plain JSON, `0600`, containing the text of Notes you have not published yet.
 
 Your posts, drafts and subscribers are never copied locally. Every read goes to Substack live.
-
----
 ### How it works
 
 ```
@@ -614,8 +590,6 @@ Errors map to typed classes, so the message names the fix rather than saying "Su
 | `ServerError` | 5xx | Substack's problem |
 | `TimeoutError` | 408 | Our own deadline, no response arrived |
 
----
-
 ## 10. Troubleshooting 🔧
 
 Run `npx @thenavidm/substack-mcp@latest doctor` first. It checks credentials, config, connectivity and byline resolution, and names what is wrong.
@@ -635,8 +609,6 @@ Some custom domains sit behind Cloudflare, which can answer 403 with `error code
 **Tools missing from the list** `SUBSTACK_READ_ONLY` is set. The 24 write tools are hidden by design.
 
 **Nothing happens at all** Check your client's MCP logs. On a bad config the server still starts and reports the problem per tool call, rather than failing silently at boot.
-
----
 ### Environment variables
 
 | Variable | Default | What it does |
@@ -658,8 +630,6 @@ Some custom domains sit behind Cloudflare, which can answer 403 with `error code
 | `SUBSTACK_MCP_TOKEN` | | Bearer token for HTTP |
 | `SUBSTACK_MCP_ALLOWED_ORIGINS` | | Extra origins beyond localhost |
 
----
-
 ### Environment variables
 
 | Variable | Default | What it does |
@@ -680,8 +650,6 @@ Some custom domains sit behind Cloudflare, which can answer 403 with `error code
 | `SUBSTACK_MCP_PORT` | `8788` | HTTP port |
 | `SUBSTACK_MCP_TOKEN` | | Bearer token for HTTP |
 | `SUBSTACK_MCP_ALLOWED_ORIGINS` | | Extra origins beyond localhost |
-
----
 
 ## FAQ ❓
 
@@ -773,8 +741,6 @@ Substack sessions do expire, and when yours does every authenticated tool starts
 <summary><b>How do I disconnect it?</b></summary>
 
 Remove the server from your client's config, which for Claude Code is `claude mcp remove substack`. Then delete `~/.substack-mcp` to remove the stored session and any queued Notes. Nothing is left behind, and nothing was ever stored anywhere but your own machine.
-
----
 
 </details>
 
