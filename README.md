@@ -41,12 +41,12 @@ Claude: Ranking your last 40 posts by paid signups.
 
 ## What makes this different
 
-Other Substack MCP servers cover the basics: list your drafts, create one, read your subscriber count. This one is built around the things that decide whether a post actually comes out right, and every claim below was checked against a live publication rather than assumed.
+These are the things that decide whether a post actually comes out right. Every claim below was checked against a live publication rather than assumed.
 
 | | |
 |---|---|
-| **Posts render correctly** | `draft_body` is a ProseMirror document, not HTML. Send HTML and Substack returns 200, then publishes your post with the tags visible as text. There is no error to catch, which is why this is the most common way a Substack integration gets it wrong. |
-| **Markdown both ways** | Markdown in, and markdown back out. Read a draft, change one sentence, send it back. Servers that only convert one way hand you raw ProseMirror JSON and leave you rebuilding the whole document to fix a typo. |
+| **Posts render correctly** | `draft_body` is a ProseMirror document, not HTML. Send HTML and Substack returns 200, then publishes your post with the tags visible as text. There is no error to catch: you find out by looking at the published post. |
+| **Markdown both ways** | Markdown in, and markdown back out. Read a draft, change one sentence, send it back, and the rest of the formatting survives. |
 | **Links become embeds** | A line holding only a YouTube, X, Spotify or Vimeo URL becomes a real player. Substack does that conversion in its editor, so it never happens through the API unless you do it yourself. |
 | **Paywalls from markdown** | `<paywall>` on its own line marks the paid split. |
 | **Subscribers, properly** | Filter on all 48 columns with 18 operators, and export the engagement metrics the list endpoint will only filter on and never return. |
@@ -649,6 +649,16 @@ Until it is on npm, this is how you install it. It is also how you read the code
 ```bash
 git clone https://github.com/thenavidm/substack-mcp.git
 cd substack-mcp
+bash deploy/install.sh
+```
+
+That installs, builds, runs the tests, and registers it with Claude Code if you
+have it. Set `SUBSTACK_PUBLICATION_URL` and `SUBSTACK_SESSION_TOKEN` first and it
+registers them for you, then runs `doctor` to check.
+
+By hand instead:
+
+```bash
 npm install
 npm run build
 ```
@@ -718,6 +728,10 @@ Navid Moazzez is a leading AI business strategist, and the host of the AI Creato
 | [zod](https://github.com/colinhacks/zod) | MIT | Tool argument schemas and validation |
 
 [Playwright](https://github.com/microsoft/playwright) is an optional peer dependency, used only by `login --playwright` and never loaded by the server.
+
+## Security
+
+Found a vulnerability? [Report it privately](https://github.com/thenavidm/substack-mcp/security/advisories/new), not as a public issue. [SECURITY.md](SECURITY.md) covers what this server holds, the write-safety model, and running it over HTTP.
 
 ## License
 
