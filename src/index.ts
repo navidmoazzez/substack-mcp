@@ -35,7 +35,7 @@ Options:
   SUBSTACK_MIN_REQUEST_INTERVAL_MS  spacing between requests, default 350
   SUBSTACK_AUDIT_LOG                append-only log of every attempted write
 
-https://github.com/thenavidm/substack-mcp
+https://github.com/navidmoazzez/substack-mcp
 `;
 
 async function main(): Promise<void> {

@@ -647,7 +647,7 @@ Some custom domains sit behind Cloudflare, which can answer 403 with `error code
 Until it is on npm, this is how you install it. It is also how you read the code.
 
 ```bash
-git clone https://github.com/thenavidm/substack-mcp.git
+git clone https://github.com/navidmoazzez/substack-mcp.git
 cd substack-mcp
 bash deploy/install.sh
 ```
@@ -731,7 +731,7 @@ Navid Moazzez is a leading AI business strategist, and the host of the AI Creato
 
 ## Security
 
-Found a vulnerability? [Report it privately](https://github.com/thenavidm/substack-mcp/security/advisories/new), not as a public issue. [SECURITY.md](SECURITY.md) covers what this server holds, the write-safety model, and running it over HTTP.
+Found a vulnerability? [Report it privately](https://github.com/navidmoazzez/substack-mcp/security/advisories/new), not as a public issue. [SECURITY.md](SECURITY.md) covers what this server holds, the write-safety model, and running it over HTTP.
 
 ## License
 

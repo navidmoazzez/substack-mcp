@@ -42,10 +42,10 @@
   "homepage": "https://navid.me",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/thenavidm/substack-mcp.git"
+    "url": "git+https://github.com/navidmoazzez/substack-mcp.git"
   },
   "bugs": {
-    "url": "https://github.com/thenavidm/substack-mcp/issues"
+    "url": "https://github.com/navidmoazzez/substack-mcp/issues"
   },
   "keywords": [
     "mcp",
