@@ -28,7 +28,7 @@ Claude: Ranking your last 40 posts by paid signups.
 
 Built and maintained by [Navid Moazzez](https://navid.me?utm_source=github&utm_medium=readme&utm_campaign=substack-mcp).
 
-<img src="https://cdn.navid.media/repos/substack-mcp.gif" alt="Claude Code using the Substack MCP server" width="520">
+<img src="https://cdn.navid.media/repos/substack-mcp.gif?v=2" alt="Claude Code using the Substack MCP server" width="520">
 
 ## Contents 📑
 
