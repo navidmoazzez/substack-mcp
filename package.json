@@ -5,7 +5,7 @@
   "type": "module",
   "main": "./dist/index.js",
   "bin": {
-    "substack-mcp": "./dist/index.js"
+    "substack-mcp": "dist/index.js"
   },
   "engines": {
     "node": ">=20"
@@ -38,7 +38,7 @@
     "vitest": "^2.1.0"
   },
   "license": "MIT",
-  "author": "Navid Moazzez <https://navid.me>",
+  "author": "Navid Moazzez (https://navid.me)",
   "homepage": "https://navid.me",
   "repository": {
     "type": "git",
@@ -64,5 +64,8 @@
     "README.md",
     "SKILL.md",
     "LICENSE"
+  ],
+  "contributors": [
+    "Navid Moazzez (https://navid.me)"
   ]
 }
