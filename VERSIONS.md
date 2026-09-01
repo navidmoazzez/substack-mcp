@@ -84,7 +84,7 @@ Tools that return other people's text say so in the response, and the server's i
 
 ### Reliability
 
-A 30 second request deadline, since Node applies none. Exponential backoff with jitter on 429 and 5xx, honouring `Retry-After`. A 350ms floor between requests so a loop does not get the account rate limited. Typed errors, so a message names the fix instead of saying "Substack API error". Cloudflare's 1010 block on custom domains is recognised and explained.
+A 30 second request deadline, since Node applies none. Exponential backoff with jitter on 429 and 5xx, honouring `Retry-After`. A 350ms floor between requests so a loop does not get the account rate limited. Typed errors, so a message names the fix instead of saying "Substack API error". Cloudflare's 1010 block on custom domains is recognized and explained.
 
 ### Setup
 

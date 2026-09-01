@@ -15,7 +15,7 @@
  *   - a floor on request spacing, so a model looping over 200 posts does not
  *     get the account rate limited.
  *   - a browser User-Agent and Referer, because publications on custom domains
- *     sit behind Cloudflare and it blocks unrecognised clients with 1010.
+ *     sit behind Cloudflare and it blocks unrecognized clients with 1010.
  */
 
 import type { Config, Credentials } from "../config.js";

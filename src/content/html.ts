@@ -7,7 +7,7 @@
  * it directly.
  *
  * This is a focused parser for the tags Substack can actually represent, not a
- * general HTML engine. Anything unrecognised degrades to its text content.
+ * general HTML engine. Anything unrecognized degrades to its text content.
  */
 
 import {

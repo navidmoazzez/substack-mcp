@@ -1,7 +1,7 @@
 # Substack MCP
 
 [![npm](https://img.shields.io/npm/v/@thenavidm%2Fsubstack-mcp?color=orange&label=npm)](https://www.npmjs.com/package/@thenavidm/substack-mcp)
-[![Licence](https://img.shields.io/badge/licence-MIT-green)](./LICENSE)
+[![License](https://img.shields.io/badge/license-MIT-green)](./LICENSE)
 [![YouTube](https://img.shields.io/badge/YouTube-@thenavidm-red?logo=youtube&logoColor=white)](https://youtube.com/@thenavidm?sub_confirmation=1)
 [![X](https://img.shields.io/badge/X-@thenavidm-black?logo=x)](https://x.com/thenavidm)
 
@@ -595,7 +595,7 @@ Every request goes through one client, so an upstream change is fixed in one fil
 
 **Request spacing.** A floor of 350ms between requests, serialised through a queue, so a model looping over 200 posts does not get your account rate limited. `SUBSTACK_MIN_REQUEST_INTERVAL_MS`.
 
-**A browser identity.** The client sends a browser User-Agent, Referer and Origin, because some publications sit behind Cloudflare, which blocks unrecognised clients. The error mapper recognises a Cloudflare block hiding inside a 403 and tells you to use the canonical host.
+**A browser identity.** The client sends a browser User-Agent, Referer and Origin, because some publications sit behind Cloudflare, which blocks unrecognized clients. The error mapper recognises a Cloudflare block hiding inside a 403 and tells you to use the canonical host.
 
 Errors map to typed classes, so the message names the fix rather than saying "Substack API error":
 
@@ -787,7 +787,7 @@ Navid Moazzez is a leading AI business strategist, and the host of the AI Creato
 
 ## Dependencies 📦
 
-| Library | Licence | What it does |
+| Library | License | What it does |
 |---|---|---|
 | [MCP TypeScript SDK](https://github.com/modelcontextprotocol/typescript-sdk) | MIT | The MCP server and transports |
 | [zod](https://github.com/colinhacks/zod) | MIT | Tool argument schemas and validation |

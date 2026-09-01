@@ -206,7 +206,7 @@ Then create the draft with create_draft. Leave it as a draft. Do not publish.`,
     {
       title: "Find what worked",
       description:
-        "Analyse which of your posts performed best and what they have in common.",
+        "Analyze which of your posts performed best and what they have in common.",
       argsSchema: {
         count: z.string().optional().describe("How many posts to look at. Default 30."),
       },
@@ -233,7 +233,7 @@ Then tell me what the top posts have in common that the bottom ones do not: subj
     {
       title: "Study another writer",
       description:
-        "Analyse another Substack's posts and Notes to see what is working for them.",
+        "Analyze another Substack's posts and Notes to see what is working for them.",
       argsSchema: {
         publication: z.string().describe("Their publication, e.g. example.substack.com"),
       },
