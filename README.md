@@ -1,5 +1,10 @@
 # Substack MCP
 
+[![npm](https://img.shields.io/npm/v/@thenavidm%2Fsubstack-mcp?color=orange&label=npm)](https://www.npmjs.com/package/@thenavidm/substack-mcp)
+[![Licence](https://img.shields.io/badge/licence-MIT-green)](./LICENSE)
+[![YouTube](https://img.shields.io/badge/YouTube-@thenavidm-red?logo=youtube&logoColor=white)](https://youtube.com/@thenavidm?sub_confirmation=1)
+[![X](https://img.shields.io/badge/X-@thenavidm-black?logo=x)](https://x.com/thenavidm)
+
 Give any AI agent real access to your Substack: writing and publishing posts, working your subscriber list, reading your analytics, and studying what is working for other writers.
 
 ```
@@ -675,47 +680,78 @@ Some custom domains sit behind Cloudflare, which can answer 403 with `error code
 
 ## FAQ ❓
 
-### What is an MCP server?
+<details>
+<summary><b>What is an MCP server?</b></summary>
 
 An MCP server is a standard way to give an AI assistant real access to a tool. Instead of describing your Substack to Claude and hoping it guesses right, the server exposes your actual drafts, subscribers and analytics as things the assistant can read and act on. MCP is the protocol they agree on, so one server works in Claude, Cursor, Windsurf and anything else that speaks it.
 
-### What is Substack?
+</details>
+
+<details>
+<summary><b>What is Substack?</b></summary>
 
 Substack is a publishing platform for newsletters and blogs. Writers publish posts that go out by email and live on the web, sell paid subscriptions, and post short updates called Notes. This server connects an AI assistant to a Substack publication you own.
 
-### Do I need to be technical to use this?
+</details>
+
+<details>
+<summary><b>Do I need to be technical to use this?</b></summary>
 
 You need to be able to paste a line into a terminal and copy a value out of your browser. That is the whole skill requirement. [Section 3](#3-setup) walks through the browser part click by click, and `doctor` tells you what is wrong in plain language if something does not work.
 
-### Is my data sent anywhere? Who can see it?
+</details>
+
+<details>
+<summary><b>Is my data sent anywhere? Who can see it?</b></summary>
 
 Nothing goes anywhere except Substack. There is no backend, no telemetry, and no third party in the path. Your session cookie and any queued Notes sit in `~/.substack-mcp` on your own machine, and [section 7](#9-your-data) says exactly what is in each file.
 
-### What can it do that I cannot do in the Substack dashboard already?
+</details>
+
+<details>
+<summary><b>What can it do that I cannot do in the Substack dashboard already?</b></summary>
 
 Three things the dashboard cannot. It reads the engagement metrics Substack will let you filter on but never shows you, through `export_subscribers`. It pulls another writer's posts and Notes with their like and restack counts so you can rank by what actually worked. And it turns markdown into real Substack formatting, including embeds and paywalls, which is not something the editor does for anything written outside it.
 
-### Can it delete something by accident?
+</details>
+
+<details>
+<summary><b>Can it delete something by accident?</b></summary>
 
 Not without being told twice. `delete_draft`, `delete_note`, `delete_comment` and `delete_template` are permanent with no trash to recover from, and all four refuse to run unless the call passes `confirm: true`. The same guard covers `publish_draft`, because publishing with `send: true` emails your whole list and an email cannot be unsent. Setting `SUBSTACK_READ_ONLY=1` removes all 24 write tools from the list entirely.
 
-### Does it cost anything?
+</details>
+
+<details>
+<summary><b>Does it cost anything?</b></summary>
 
 It costs nothing. The server is MIT licensed and free, and it talks to your existing Substack account. You do not need a paid Substack plan, though some analytics reports only return data if your publication has paid subscribers.
 
-### Does it work with ChatGPT or Cursor, or only Claude?
+</details>
+
+<details>
+<summary><b>Does it work with ChatGPT or Cursor, or only Claude?</b></summary>
 
 It works with any client that speaks MCP. Claude Code, Claude Desktop, Cursor, Windsurf, VS Code, Zed and Cline are all covered in [section 2](#2-quick-install), and anything else that supports MCP over stdio will work with the same three settings.
 
-### Can I connect more than one publication?
+</details>
+
+<details>
+<summary><b>Can I connect more than one publication?</b></summary>
 
 You can connect as many as you like. One Substack login often owns several, so every publication-scoped tool takes an optional `publication` argument matched against the hostname. Set `SUBSTACK_PUBLICATIONS` to a JSON array and pass `publication: "example"` to pick one, or leave it out and the first is used.
 
-### What happens when my session expires?
+</details>
+
+<details>
+<summary><b>What happens when my session expires?</b></summary>
 
 Substack sessions do expire, and when yours does every authenticated tool starts returning an authentication error naming the cause. The fix is to grab a fresh `connect.sid` cookie and update it, or run `substack-mcp login` again. `doctor` warns you once a stored session passes 75 days, before it breaks.
 
-### How do I disconnect it?
+</details>
+
+<details>
+<summary><b>How do I disconnect it?</b></summary>
 
 Remove the server from your client's config, which for Claude Code is `claude mcp remove substack`. Then delete `~/.substack-mcp` to remove the stored session and any queued Notes. Nothing is left behind, and nothing was ever stored anywhere but your own machine.
 
@@ -723,6 +759,12 @@ Remove the server from your client's config, which for Claude Code is `claude mc
 ---
 
 ---
+
+</details>
+
+## Questions
+
+Run into a problem or have a question? [Open an issue](https://github.com/navidmoazzez/substack-mcp/issues) and I will help.
 
 ## About the author 👋
 
