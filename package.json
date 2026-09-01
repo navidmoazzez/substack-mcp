@@ -1,7 +1,7 @@
 {
   "name": "@thenavidm/substack-mcp",
-  "version": "2.0.0",
-  "description": "MCP server for Substack. 65 tools for drafts, posts, Notes, subscribers, analytics, tags, comments, the reader feed, and research. Works with Claude Code, Claude Desktop, Cursor, Windsurf, and any MCP-compatible client.",
+  "version": "2.0.1",
+  "description": "MCP server for Substack. 65 tools for drafts, posts, Notes, subscribers, analytics, tags, comments, the reader feed and researching other writers, with markdown that renders as real Substack formatting. Works with Claude Code, Claude Desktop, Cursor, Windsurf, and any MCP-compatible client.",
   "type": "module",
   "main": "./dist/index.js",
   "bin": {
@@ -50,6 +50,7 @@
     "mcp",
     "model-context-protocol",
     "substack",
+    "substack-api",
     "newsletter",
     "mcp-server",
     "claude",

@@ -2,7 +2,13 @@
 
 | Component | Version | Last Updated |
 |-----------|---------|--------------|
-| substack-mcp | 2.0.0 | 2026-08-31 |
+| substack-mcp | 2.0.1 | 2026-09-01 |
+
+---
+
+## 2.0.1
+
+Metadata only. The package description and keywords now match the house format, and the repo description and topics with them. No code change.
 
 ---
 
