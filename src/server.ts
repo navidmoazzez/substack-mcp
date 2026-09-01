@@ -7,6 +7,9 @@
  * click rather than something the user has to know to ask for.
  */
 
+import { existsSync, readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { SubstackClient } from "./api/client.js";
@@ -18,7 +21,29 @@ import { WriteGuard } from "./safety.js";
 import { ALL_TOOLS } from "./tools/index.js";
 import { makeContext, register } from "./tools/kit.js";
 
-export const VERSION = "2.0.0";
+/**
+ * Read from package.json rather than written here twice. A hardcoded copy drifts
+ * the moment a version is bumped, and then `--version` lies about which build is
+ * running, which is the one thing it exists to answer.
+ */
+export const VERSION: string = ((): string => {
+  try {
+    const here = dirname(fileURLToPath(import.meta.url));
+    // dist/server.js sits one level below the package root.
+    for (const candidate of [
+      join(here, "..", "package.json"),
+      join(here, "..", "..", "package.json"),
+    ]) {
+      if (existsSync(candidate)) {
+        const pkg = JSON.parse(readFileSync(candidate, "utf8")) as { version?: string };
+        if (pkg.version) return pkg.version;
+      }
+    }
+  } catch {
+    // Fall through to the placeholder below.
+  }
+  return "0.0.0-unknown";
+})();
 
 export type BuiltServer = {
   server: McpServer;

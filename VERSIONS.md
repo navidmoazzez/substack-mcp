@@ -2,7 +2,16 @@
 
 | Component | Version | Last Updated |
 |-----------|---------|--------------|
-| substack-mcp | 2.0.1 | 2026-09-01 |
+| substack-mcp | 2.0.2 | 2026-09-01 |
+
+---
+
+## 2.0.2
+
+`--version` and `--help` reported 2.0.0 on a 2.0.1 package, because the version
+was written in the source as well as in package.json and only one of them was
+bumped. It is now read from package.json, and the check that keeps the tool
+counts honest checks the version too.
 
 ---
 

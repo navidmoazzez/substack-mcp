@@ -90,6 +90,19 @@ const readOnly = await toolsFrom({ SUBSTACK_READ_ONLY: "1" });
 
 const problems = [];
 
+// The version is the other number that silently drifts. `--version` exists to
+// answer "which build is this", so it lying is worse than it being absent.
+const pkg = JSON.parse(readFileSync(join(root, "package.json"), "utf8"));
+const reported = await new Promise((resolve) => {
+  const child = spawn("node", [server, "--version"], { stdio: ["ignore", "pipe", "ignore"] });
+  let out = "";
+  child.stdout.on("data", (d) => (out += d.toString()));
+  child.on("close", () => resolve(out.trim()));
+});
+if (reported !== pkg.version) {
+  problems.push(`--version reports ${reported} but package.json says ${pkg.version}`);
+}
+
 if (readOnly.length !== read) {
   problems.push(
     `read-only mode exposes ${readOnly.length} tools but there are ${read} read tools`,
@@ -136,4 +149,4 @@ if (problems.length) {
   process.exit(1);
 }
 
-console.log(`${total} tools, ${read} read, ${write} write. Every document agrees.`);
+console.log(`v${pkg.version}: ${total} tools, ${read} read, ${write} write. Every document agrees.`);
