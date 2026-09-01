@@ -23,39 +23,16 @@ Claude: Ranking your last 40 posts by paid signups.
 
 | | Section | |
 |---|---|---|
-| | [What makes this different](#what-makes-this-different) | Why pick this one |
 | 1 | [What you can ask it](#1-what-you-can-ask-it) | Real prompts, not features |
 | 2 | [Install](#2-install) | Every client, copy and paste |
 | 3 | [Connect your account](#3-connect-your-account) | Three ways, fastest first |
 | 4 | [Tools](#4-tools) | All 65, with arguments |
 | 5 | [Writing safely](#5-writing-safely) | Why publishing asks twice |
 | 6 | [Writing posts](#6-writing-posts) | Markdown, embeds, paywalls |
-| 7 | [Several publications](#7-several-publications) | One login, many Substacks |
-| 8 | [How it works](#8-how-it-works) | Architecture |
-| 9 | [Your data](#9-your-data) | What is stored and where |
-| 10 | [Risks](#10-risks) | Read this before you install |
-| 11 | [Troubleshooting](#11-troubleshooting) | When something breaks |
-| 12 | [Run it from source](#12-run-it-from-source) | Install without npm |
+| 7 | [Your data](#7-your-data) | What is stored and where |
+| 8 | [Troubleshooting](#8-troubleshooting) | When something breaks |
+| | [FAQ](#faq) | The questions people actually ask |
 
----
-
-## What makes this different
-
-These are the things that decide whether a post actually comes out right. Every claim below was checked against a live publication rather than assumed.
-
-| | |
-|---|---|
-| **Posts render correctly** | `draft_body` is a ProseMirror document, not HTML. Send HTML and Substack returns 200, then publishes your post with the tags visible as text. There is no error to catch: you find out by looking at the published post. |
-| **Markdown both ways** | Markdown in, and markdown back out. Read a draft, change one sentence, send it back, and the rest of the formatting survives. |
-| **Links become embeds** | A line holding only a YouTube, X, Spotify or Vimeo URL becomes a real player. Substack does that conversion in its editor, so it never happens through the API unless you do it yourself. |
-| **Paywalls from markdown** | `<paywall>` on its own line marks the paid split. |
-| **Subscribers, properly** | Filter on all 48 columns with 18 operators, and export the engagement metrics the list endpoint will only filter on and never return. |
-| **Analytics, all of it** | 16 publication reports, including which other Substacks share your readers. |
-| **More than one publication** | One login often owns several. Every tool takes a `publication` argument. |
-| **Notes can be scheduled** | Substack schedules posts but not Notes, so the queue lives here. |
-| **Research other writers** | Their posts and Notes with engagement attached, so you can rank by what worked. Custom domains resolve automatically. |
-| **Irreversible things ask first** | Publishing emails your whole list and cannot be undone. Those tools refuse to run without an explicit confirmation, and `SUBSTACK_READ_ONLY=1` removes them entirely. |
-| **Built to keep working** | A real request deadline, backoff on rate limits, typed errors that name the fix, and every MCP annotation set explicitly. |
 
 ---
 
@@ -75,15 +52,11 @@ The last one is the point. It reads your existing posts, writes a new draft in y
 
 ---
 
+---
+
 ## 2. Install
 
 Node 20 or newer. Nothing else.
-
-> Not released to npm yet, so the `npx` commands below will not resolve until
-> `v2.0.0` is tagged. Until then, [run it from source](#12-run-it-from-source) and
-> replace `"command": "npx"` and its `args` with
-> `"command": "node", "args": ["/full/path/to/substack-mcp/dist/index.js"]`.
-> Everything else on this page is the same.
 
 ### Claude Code
 
@@ -93,7 +66,7 @@ One line, from anywhere in a terminal:
 claude mcp add substack \
   -e SUBSTACK_PUBLICATION_URL=example.substack.com \
   -e SUBSTACK_SESSION_TOKEN=your-connect-sid-value \
-  -- npx -y @thenavidm/substack-mcp
+  -- npx -y @thenavidm/substack-mcp@latest
 ```
 
 Then run `/mcp` inside Claude Code. `substack` should be listed as connected.
@@ -129,7 +102,7 @@ If the file is empty or does not exist, paste this whole thing in:
   "mcpServers": {
     "substack": {
       "command": "npx",
-      "args": ["-y", "@thenavidm/substack-mcp"],
+      "args": ["-y", "@thenavidm/substack-mcp@latest"],
       "env": {
         "SUBSTACK_PUBLICATION_URL": "example.substack.com",
         "SUBSTACK_SESSION_TOKEN": "your-connect-sid-value"
@@ -216,10 +189,52 @@ that port controls your Substack.
 ### Check it worked
 
 ```bash
-npx @thenavidm/substack-mcp doctor
+npx @thenavidm/substack-mcp@latest doctor
 ```
 
 `doctor` runs the checks in order and names the actual problem, rather than leaving you to guess which of six things is wrong.
+
+---
+### Run it from source
+
+Until it is on npm, this is how you install it. It is also how you read the code.
+
+```bash
+git clone https://github.com/navidmoazzez/substack-mcp.git
+cd substack-mcp
+bash deploy/install.sh
+```
+
+That installs, builds, runs the tests, and registers it with Claude Code if you
+have it. Set `SUBSTACK_PUBLICATION_URL` and `SUBSTACK_SESSION_TOKEN` first and it
+registers them for you, then runs `doctor` to check.
+
+By hand instead:
+
+```bash
+npm install
+npm run build
+```
+
+That produces `dist/index.js`. Point any client at it with `"command": "node"` and `"args": ["/full/path/to/substack-mcp/dist/index.js"]`, then follow [section 3](#3-connect-your-account) as normal.
+
+`npm test` runs the suite. `npm run typecheck` checks types without building.
+
+```
+src/
+  api/         one HTTP client, typed errors, identity resolution
+  auth/        encrypted session store, the login command
+  content/     markdown <-> ProseMirror, embeds, images
+  subscribers/ the 48-column filter model
+  tools/       65 tools, grouped by subject
+  transport/   stdio and HTTP
+  safety.ts    the write guard
+  scheduler.ts the local Note queue
+```
+
+Every tool is one `defineTool` call. Guarding, annotations, error handling and publication selection are applied centrally, so a tool file only describes what it does.
+
+---
 
 ---
 
@@ -232,7 +247,7 @@ Substack has no public API and no OAuth. Everything here runs on your browser se
 ### Option A: paste the cookie (fastest, recommended)
 
 ```bash
-npx @thenavidm/substack-mcp login
+npx @thenavidm/substack-mcp@latest login
 ```
 
 It asks for your publication URL and the cookie, resolves your user id, and stores the result encrypted. Then you can leave the `env` block out of your client config entirely.
@@ -248,7 +263,7 @@ Turn off ad blockers first. Some of them strip the cookie from that panel.
 ### Option B: read it from the Chrome you already have open
 
 ```bash
-npx @thenavidm/substack-mcp login --playwriter
+npx @thenavidm/substack-mcp@latest login --playwriter
 ```
 
 Uses [Playwriter](https://playwriter.dev) to read the cookie out of your running Chrome, where you are already signed in. No browser launch, no sign-in, no CAPTCHA. Requires Playwriter and its extension.
@@ -257,7 +272,7 @@ Uses [Playwriter](https://playwriter.dev) to read the cookie out of your running
 
 ```bash
 npm i -g playwright && npx playwright install chromium
-npx @thenavidm/substack-mcp login --playwright
+npx @thenavidm/substack-mcp@latest login --playwright
 ```
 
 A browser opens and waits up to ten minutes for you to sign in, CAPTCHA and emailed link included. This is much the slowest option, and the only one that works on a machine with no Chrome, or in CI.
@@ -271,6 +286,8 @@ Nothing above is required. Set `SUBSTACK_PUBLICATION_URL` and `SUBSTACK_SESSION_
 ### When it expires
 
 Sessions do expire, commonly reported at around 90 days, though I have not measured it. When calls start failing with an authentication error, run `login` again, or paste a fresh cookie. `doctor` warns you once a stored session passes 75 days.
+
+---
 
 ---
 
@@ -443,6 +460,23 @@ Takes exactly one of `url` or `path`. PNG, JPEG, GIF and WebP up to 10MB. The ty
 Beyond tools, the server exposes two MCP resources (`substack://publication` and `substack://connected`) so a client can load your publication's context without spending a tool call, and four prompts: **Draft a post from an idea**, **Find what worked**, **Study another writer**, and **Find lapsed subscribers**.
 
 ---
+### Several publications
+
+One Substack login often owns more than one publication.
+
+```json
+"env": {
+  "SUBSTACK_PUBLICATIONS": "[{\"publication_url\":\"one.substack.com\",\"session_token\":\"...\"},{\"publication_url\":\"two.substack.com\",\"session_token\":\"...\"}]"
+}
+```
+
+Every publication-scoped tool takes an optional `publication` argument, matched loosely against the hostname, so `"two"` finds `two.substack.com`. Leave it out and the first one is used.
+
+Ask for a publication that is not connected and the error names the ones that are, rather than failing silently against the wrong Substack.
+
+---
+
+---
 
 ## 5. Writing safely
 
@@ -484,6 +518,21 @@ Append-only, one JSON line per attempted write, allowed or blocked.
 ### Prompt injection
 
 Several tools return text other people wrote: comments, your reader feed, another writer's posts. An agent that can read that text and also publish is exposed to instructions hidden inside it. Every one of those tools says so in its own response, and the server's instructions tell the model to treat that text as data. Combined with confirmation on every public action, an injected "publish this now" cannot fire on its own.
+
+---
+### Risks worth knowing
+
+**This uses an undocumented API.** Substack publishes no REST API and no OAuth. These are the endpoints its own web app calls. They can change without notice, and when they do, tools break until the fix ships.
+
+**Your session cookie is full account access.** Anyone who gets it can post as you, read your subscribers, and change your billing. It is exactly as sensitive as your password. Never paste it into an issue.
+
+**An agent with publish rights can email your entire list.** The confirmation gate makes that hard to do by accident. It does not make it impossible for a determined bad instruction. If you are pointing an autonomous agent at this, run it with `SUBSTACK_READ_ONLY=1`.
+
+**Automated subscriber additions are how publications get marked as spam.** `add_subscriber` exists for people who asked to be added. Importing anyone else is your problem, not Substack's.
+
+**Terms of service.** Automating your own account through its own web endpoints is not something Substack documents or blesses. I am not aware of anyone being banned for it, but I cannot promise that, and neither can anyone else shipping a tool like this.
+
+---
 
 ---
 
@@ -535,23 +584,24 @@ Substack's document format has no table node, so a table cannot be rendered nati
 
 ---
 
-## 7. Several publications
-
-One Substack login often owns more than one publication.
-
-```json
-"env": {
-  "SUBSTACK_PUBLICATIONS": "[{\"publication_url\":\"one.substack.com\",\"session_token\":\"...\"},{\"publication_url\":\"two.substack.com\",\"session_token\":\"...\"}]"
-}
-```
-
-Every publication-scoped tool takes an optional `publication` argument, matched loosely against the hostname, so `"two"` finds `two.substack.com`. Leave it out and the first one is used.
-
-Ask for a publication that is not connected and the error names the ones that are, rather than failing silently against the wrong Substack.
-
 ---
 
-## 8. How it works
+## 7. Your data
+
+Nothing is sent anywhere except Substack. There is no telemetry, no analytics, and no third-party service in the path.
+
+Two files, both in `~/.substack-mcp` (`SUBSTACK_MCP_HOME` moves it):
+
+**`session.json`**, only if you ran `login`. Written `0600`, encrypted with AES-256-GCM under a key derived from this OS account and this machine, which is never stored.
+
+Be clear about what that buys. A copied file is useless elsewhere, and a casual disk or backup read sees ciphertext. It is machine-binding and obfuscation, **not** a secret vault. Code running as you on this machine can re-derive the key, which is exactly the exposure of the environment-variable path too. If you would rather your client held the secret, use env vars.
+
+**`scheduled-notes.json`**, the local queue for `schedule_note`. Plain JSON, `0600`, containing the text of Notes you have not published yet.
+
+Your posts, drafts and subscribers are never copied locally. Every read goes to Substack live.
+
+---
+### How it works
 
 ```
 your MCP client
@@ -590,39 +640,11 @@ Errors map to typed classes, so the message names the fix rather than saying "Su
 
 ---
 
-## 9. Your data
-
-Nothing is sent anywhere except Substack. There is no telemetry, no analytics, and no third-party service in the path.
-
-Two files, both in `~/.substack-mcp` (`SUBSTACK_MCP_HOME` moves it):
-
-**`session.json`**, only if you ran `login`. Written `0600`, encrypted with AES-256-GCM under a key derived from this OS account and this machine, which is never stored.
-
-Be clear about what that buys. A copied file is useless elsewhere, and a casual disk or backup read sees ciphertext. It is machine-binding and obfuscation, **not** a secret vault. Code running as you on this machine can re-derive the key, which is exactly the exposure of the environment-variable path too. If you would rather your client held the secret, use env vars.
-
-**`scheduled-notes.json`**, the local queue for `schedule_note`. Plain JSON, `0600`, containing the text of Notes you have not published yet.
-
-Your posts, drafts and subscribers are never copied locally. Every read goes to Substack live.
-
 ---
 
-## 10. Risks
+## 8. Troubleshooting
 
-**This uses an undocumented API.** Substack publishes no REST API and no OAuth. These are the endpoints its own web app calls. They can change without notice, and when they do, tools break until the fix ships.
-
-**Your session cookie is full account access.** Anyone who gets it can post as you, read your subscribers, and change your billing. It is exactly as sensitive as your password. Never paste it into an issue.
-
-**An agent with publish rights can email your entire list.** The confirmation gate makes that hard to do by accident. It does not make it impossible for a determined bad instruction. If you are pointing an autonomous agent at this, run it with `SUBSTACK_READ_ONLY=1`.
-
-**Automated subscriber additions are how publications get marked as spam.** `add_subscriber` exists for people who asked to be added. Importing anyone else is your problem, not Substack's.
-
-**Terms of service.** Automating your own account through its own web endpoints is not something Substack documents or blesses. I am not aware of anyone being banned for it, but I cannot promise that, and neither can anyone else shipping a tool like this.
-
----
-
-## 11. Troubleshooting
-
-Run `npx @thenavidm/substack-mcp doctor` first. It checks credentials, config, connectivity and byline resolution, and names what is wrong.
+Run `npx @thenavidm/substack-mcp@latest doctor` first. It checks credentials, config, connectivity and byline resolution, and names what is wrong.
 
 **"Substack rejected the session"** Your cookie expired. Get a fresh `connect.sid`, or run `login` again.
 
@@ -641,49 +663,7 @@ Some custom domains sit behind Cloudflare, which can answer 403 with `error code
 **Nothing happens at all** Check your client's MCP logs. On a bad config the server still starts and reports the problem per tool call, rather than failing silently at boot.
 
 ---
-
-## 12. Run it from source
-
-Until it is on npm, this is how you install it. It is also how you read the code.
-
-```bash
-git clone https://github.com/navidmoazzez/substack-mcp.git
-cd substack-mcp
-bash deploy/install.sh
-```
-
-That installs, builds, runs the tests, and registers it with Claude Code if you
-have it. Set `SUBSTACK_PUBLICATION_URL` and `SUBSTACK_SESSION_TOKEN` first and it
-registers them for you, then runs `doctor` to check.
-
-By hand instead:
-
-```bash
-npm install
-npm run build
-```
-
-That produces `dist/index.js`. Point any client at it with `"command": "node"` and `"args": ["/full/path/to/substack-mcp/dist/index.js"]`, then follow [section 3](#3-connect-your-account) as normal.
-
-`npm test` runs the suite. `npm run typecheck` checks types without building.
-
-```
-src/
-  api/         one HTTP client, typed errors, identity resolution
-  auth/        encrypted session store, the login command
-  content/     markdown <-> ProseMirror, embeds, images
-  subscribers/ the 48-column filter model
-  tools/       65 tools, grouped by subject
-  transport/   stdio and HTTP
-  safety.ts    the write guard
-  scheduler.ts the local Note queue
-```
-
-Every tool is one `defineTool` call. Guarding, annotations, error handling and publication selection are applied centrally, so a tool file only describes what it does.
-
----
-
-## Environment variables
+### Environment variables
 
 | Variable | Default | What it does |
 |---|---|---|
@@ -704,9 +684,56 @@ Every tool is one `defineTool` call. Guarding, annotations, error handling and p
 | `SUBSTACK_MCP_TOKEN` | | Bearer token for HTTP |
 | `SUBSTACK_MCP_ALLOWED_ORIGINS` | | Extra origins beyond localhost |
 
-## Versions
+---
 
-See [VERSIONS.md](VERSIONS.md).
+## FAQ
+
+### What is an MCP server?
+
+An MCP server is a standard way to give an AI assistant real access to a tool. Instead of describing your Substack to Claude and hoping it guesses right, the server exposes your actual drafts, subscribers and analytics as things the assistant can read and act on. MCP is the protocol they agree on, so one server works in Claude, Cursor, Windsurf and anything else that speaks it.
+
+### What is Substack?
+
+Substack is a publishing platform for newsletters and blogs. Writers publish posts that go out by email and live on the web, sell paid subscriptions, and post short updates called Notes. This server connects an AI assistant to a Substack publication you own.
+
+### Do I need to be technical to use this?
+
+You need to be able to paste a line into a terminal and copy a value out of your browser. That is the whole skill requirement. [Section 3](#3-connect-your-account) walks through the browser part click by click, and `doctor` tells you what is wrong in plain language if something does not work.
+
+### Is my data sent anywhere? Who can see it?
+
+Nothing goes anywhere except Substack. There is no backend, no telemetry, and no third party in the path. Your session cookie and any queued Notes sit in `~/.substack-mcp` on your own machine, and [section 7](#7-your-data) says exactly what is in each file.
+
+### What can it do that I cannot do in the Substack dashboard already?
+
+Three things the dashboard cannot. It reads the engagement metrics Substack will let you filter on but never shows you, through `export_subscribers`. It pulls another writer's posts and Notes with their like and restack counts so you can rank by what actually worked. And it turns markdown into real Substack formatting, including embeds and paywalls, which is not something the editor does for anything written outside it.
+
+### Can it delete something by accident?
+
+Not without being told twice. `delete_draft`, `delete_note`, `delete_comment` and `delete_template` are permanent with no trash to recover from, and all four refuse to run unless the call passes `confirm: true`. The same guard covers `publish_draft`, because publishing with `send: true` emails your whole list and an email cannot be unsent. Setting `SUBSTACK_READ_ONLY=1` removes all 24 write tools from the list entirely.
+
+### Does it cost anything?
+
+It costs nothing. The server is MIT licensed and free, and it talks to your existing Substack account. You do not need a paid Substack plan, though some analytics reports only return data if your publication has paid subscribers.
+
+### Does it work with ChatGPT or Cursor, or only Claude?
+
+It works with any client that speaks MCP. Claude Code, Claude Desktop, Cursor, Windsurf, VS Code, Zed and Cline are all covered in [section 2](#2-install), and anything else that supports MCP over stdio will work with the same three settings.
+
+### Can I connect more than one publication?
+
+You can connect as many as you like. One Substack login often owns several, so every publication-scoped tool takes an optional `publication` argument matched against the hostname. Set `SUBSTACK_PUBLICATIONS` to a JSON array and pass `publication: "example"` to pick one, or leave it out and the first is used.
+
+### What happens when my session expires?
+
+Substack sessions do expire, and when yours does every authenticated tool starts returning an authentication error naming the cause. The fix is to grab a fresh `connect.sid` cookie and update it, or run `substack-mcp login` again. `doctor` warns you once a stored session passes 75 days, before it breaks.
+
+### How do I disconnect it?
+
+Remove the server from your client's config, which for Claude Code is `claude mcp remove substack`. Then delete `~/.substack-mcp` to remove the stored session and any queued Notes. Nothing is left behind, and nothing was ever stored anywhere but your own machine.
+
+
+---
 
 ## About the author
 
@@ -715,6 +742,8 @@ Navid Moazzez is a leading AI business strategist, and the host of the AI Creato
 **Links**
 
 - Personal website: [navid.me](https://navid.me)
+- Store: [navid.bio](https://navid.bio)
+- Navid Media: [navid.media](https://navid.media)
 - YouTube: [@thenavidm](https://youtube.com/@thenavidm?sub_confirmation=1) and [@thenavidai](https://youtube.com/@thenavidai?sub_confirmation=1)
 - X: [@thenavidm](https://x.com/thenavidm)
 - Instagram: [@thenavidm](https://instagram.com/thenavidm)
@@ -728,11 +757,9 @@ Navid Moazzez is a leading AI business strategist, and the host of the AI Creato
 | [zod](https://github.com/colinhacks/zod) | MIT | Tool argument schemas and validation |
 
 [Playwright](https://github.com/microsoft/playwright) is an optional peer dependency, used only by `login --playwright` and never loaded by the server.
-
 ## Security
 
 Found a vulnerability? [Report it privately](https://github.com/navidmoazzez/substack-mcp/security/advisories/new), not as a public issue. [SECURITY.md](SECURITY.md) covers what this server holds, the write-safety model, and running it over HTTP.
-
 ## License
 
 [MIT](./LICENSE). Free to use, modify, and share.
