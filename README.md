@@ -5,7 +5,13 @@
 [![YouTube](https://img.shields.io/badge/YouTube-@thenavidm-red?logo=youtube&logoColor=white)](https://youtube.com/@thenavidm?sub_confirmation=1)
 [![X](https://img.shields.io/badge/X-@thenavidm-black?logo=x)](https://x.com/thenavidm)
 
-Give any AI agent real access to your Substack: writing and publishing posts, working your subscriber list, reading your analytics, and studying what is working for other writers.
+It writes and publishes posts, works your subscriber list, and reads your analytics.
+
+It also researches other writers, which is the part the dashboard cannot do.
+
+65 tools. Publishing emails every subscriber and cannot be unsent, so it asks first.
+
+Built and maintained by [Navid Moazzez](https://navid.me).
 
 ```
 You: which of my posts actually converted free readers to paid?
@@ -20,7 +26,6 @@ Claude: Ranking your last 40 posts by paid signups.
   Your five worst converters are all essays with abstract titles.
 ```
 
-Built by [Navid Moazzez](https://navid.me).
 
 ## Contents 📑
 
