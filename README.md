@@ -1,3 +1,5 @@
+<img src="https://cdn.navid.media/connectors/substack-icon.png" alt="Substack" width="88">
+
 # Substack MCP
 
 [![npm](https://img.shields.io/npm/v/@thenavidm%2Fsubstack-mcp?color=orange&label=npm)](https://www.npmjs.com/package/@thenavidm/substack-mcp)
