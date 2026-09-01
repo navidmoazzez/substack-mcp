@@ -192,7 +192,7 @@ docker run -i --rm \
   substack-mcp
 ```
 
-Once a version is tagged, `ghcr.io/thenavidm/substack-mcp:latest` is published
+Once a version is tagged, `ghcr.io/navidmoazzez/substack-mcp:latest` is published
 and can be used instead of building.
 
 ### Self-hosting

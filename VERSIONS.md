@@ -2,7 +2,13 @@
 
 | Component | Version | Last Updated |
 |-----------|---------|--------------|
-| substack-mcp | 2.0.2 | 2026-09-01 |
+| substack-mcp | 2.0.3 | 2026-09-01 |
+
+---
+
+## 2.0.3
+
+The repository moved to `navidmoazzez/substack-mcp`. Package links updated to match. No code change.
 
 ---
 
