@@ -2,18 +2,9 @@
 
 # Substack MCP
 
-[![npm](https://img.shields.io/npm/v/@thenavidm%2Fsubstack-mcp?color=orange&label=npm)](https://www.npmjs.com/package/@thenavidm/substack-mcp)
-[![License](https://img.shields.io/badge/License-MIT-green)](./LICENSE)
-[![YouTube](https://img.shields.io/badge/YouTube-@thenavidm-red?logo=youtube&logoColor=white)](https://youtube.com/@thenavidm?sub_confirmation=1)
-[![X](https://img.shields.io/badge/X-@thenavidm-black?logo=x)](https://x.com/thenavidm)
+Substack has no public API. That is why your AI assistant cannot see your drafts, your subscribers or your numbers, and why most things claiming to connect to it publish posts with the HTML tags showing.
 
-It writes and publishes posts, works your subscriber list, and reads your analytics.
-
-It also researches other writers, which is the part the dashboard cannot do.
-
-65 tools. Publishing emails every subscriber and cannot be unsent, so it asks first.
-
-Built and maintained by [Navid Moazzez](https://navid.me?utm_source=github&utm_medium=readme&utm_campaign=substack-mcp).
+This one speaks Substack's own document format. Ask for a draft and you get a draft, with the YouTube link as a player and the paywall where you put it.
 
 ```
 You: which of my posts actually converted free readers to paid?
@@ -28,6 +19,7 @@ Claude: Ranking your last 40 posts by paid signups.
   Your five worst converters are all essays with abstract titles.
 ```
 
+Built by [Navid Moazzez](https://navid.me).
 
 ## Contents 📑
 
@@ -45,7 +37,6 @@ Claude: Ranking your last 40 posts by paid signups.
 | 10 | [Troubleshooting](#10-troubleshooting) | When something breaks |
 | | [FAQ](#faq) | The questions people actually ask |
 
-
 ---
 
 ## 1. What you can ask it 💬
@@ -61,10 +52,6 @@ Claude: Ranking your last 40 posts by paid signups.
 - Turn my last three posts into a guide, and put the YouTube version at the top.
 
 The last one is the point. It reads your existing posts, writes a new draft in your format, and embeds the video as a real player rather than a blue link, because it speaks Substack's document format rather than pasting HTML at it.
-
----
-
----
 
 ---
 
@@ -91,7 +78,6 @@ Installing the package needs no account. Only connecting it does, which is the n
 > [!IMPORTANT]
 > Use the `yourname.substack.com` address, not a custom domain. Substack does not
 > serve its API on custom domains: the request redirects and ends in a 404.
-
 
 ---
 
@@ -143,10 +129,6 @@ Nothing above is required. Set `SUBSTACK_PUBLICATION_URL` and `SUBSTACK_SESSION_
 ### When it expires
 
 Sessions do expire, commonly reported at around 90 days, though I have not measured it. When calls start failing with an authentication error, run `login` again, or paste a fresh cookie. `doctor` warns you once a stored session passes 75 days.
-
----
-
----
 
 ---
 
@@ -239,7 +221,6 @@ It binds to `127.0.0.1` and serves `/health`. To reach it from elsewhere set `SU
 > The HTTP transport holds a live credential for your Substack account. Binding it
 > beyond localhost without a token hands your account to anyone who finds the port.
 
-
 ---
 
 ## 5. Check it worked 🩺
@@ -253,7 +234,6 @@ npx @thenavidm/substack-mcp@latest doctor
 ---
 
 Two things account for almost every failure. Node is not on the PATH your client sees, which the tip above covers. Or the session cookie is wrong or expired, which `doctor` names directly.
-
 
 ---
 
@@ -309,7 +289,11 @@ Notes have no draft state on Substack. Writing one publishes it, immediately and
 | `list_notes` | read | Notes you have published |
 | `delete_note` | **destructive** | Permanent. Needs `confirm` |
 
-Substack does not schedule Notes, so the queue is kept locally and this server publishes each one when it comes due. **That only happens while the server is running.** A Note set for 9am fires at 9am if your machine is awake with your client open, and otherwise on the next start after that time, flagged as published late. Nothing is ever dropped. For scheduling that does not depend on your laptop, see [self-hosting](#self-hosted-over-http).
+Substack does not schedule Notes, so the queue is kept locally and this server publishes each one when it comes due.
+
+**That only happens while the server is running.** A Note set for 9am fires at 9am if your machine is awake with your client open. Otherwise it goes out on the next start after that time, flagged as published late.
+
+Nothing is ever dropped. For scheduling that does not depend on your laptop, see [self-hosted over HTTP](#self-hosted-over-http).
 
 ### Subscribers
 
@@ -442,15 +426,15 @@ Ask for a publication that is not connected and the error names the ones that ar
 
 ---
 
----
-
----
-
 ## 7. Writing safely 🔒
 
 Two positions are common and both are wrong. Ship `publish` and `delete` unguarded, and one mis-parsed instruction emails your entire list. Remove them and call that safety, and you have not made anything safer, you have moved the work back to the human.
 
-The actual hazard is narrow and worth naming. `publish_draft` with `send: true` emails every subscriber you have and **there is no unsend**. `delete_draft` has no undo. `publish_note` and `comment_on_post` are public the instant they run. None of these is dangerous when a person meant it. All of them are dangerous one plausible misreading of "tidy up my drafts" away.
+The actual hazard is narrow and worth naming.
+
+`publish_draft` with `send: true` emails every subscriber you have, and there is no unsend. `delete_draft` has no undo. `publish_note` and `comment_on_post` are public the instant they run.
+
+None of these is dangerous when a person meant it. All of them are dangerous one plausible misreading of "tidy up my drafts" away.
 
 So everything works, and the irreversible things need an explicit `confirm: true`:
 
@@ -485,24 +469,44 @@ Append-only, one JSON line per attempted write, allowed or blocked.
 
 ### Prompt injection
 
-Several tools return text other people wrote: comments, your reader feed, another writer's posts. An agent that can read that text and also publish is exposed to instructions hidden inside it. Every one of those tools says so in its own response, and the server's instructions tell the model to treat that text as data. Combined with confirmation on every public action, an injected "publish this now" cannot fire on its own.
+Several tools return text other people wrote. Comments, your reader feed, another writer's posts.
+
+An agent that can read that text and also publish is exposed to instructions hidden inside it. Someone can leave a comment that reads like a command.
+
+Two things push back on that. Every one of those tools says so in its own response, and the server's instructions tell the model to treat that text as data rather than orders.
+
+Neither is complete. The real defence for an agent working unattended is `SUBSTACK_READ_ONLY=1`, which removes the write tools entirely.
 
 ---
 ### Risks worth knowing
 
-**This uses an undocumented API.** Substack publishes no REST API and no OAuth. These are the endpoints its own web app calls. They can change without notice, and when they do, tools break until the fix ships.
+**This uses an undocumented API.**
 
-**Your session cookie is full account access.** Anyone who gets it can post as you, read your subscribers, and change your billing. It is exactly as sensitive as your password. Never paste it into an issue.
+Substack publishes no REST API and no OAuth. These are the endpoints its own web app calls.
 
-**An agent with publish rights can email your entire list.** The confirmation gate makes that hard to do by accident. It does not make it impossible for a determined bad instruction. If you are pointing an autonomous agent at this, run it with `SUBSTACK_READ_ONLY=1`.
+They can change without notice, and when they do, tools break until the fix ships.
 
-**Automated subscriber additions are how publications get marked as spam.** `add_subscriber` exists for people who asked to be added. Importing anyone else is your problem, not Substack's.
+**Your session cookie is full account access.**
 
-**Terms of service.** Automating your own account through its own web endpoints is not something Substack documents or blesses. I am not aware of anyone being banned for it, but I cannot promise that, and neither can anyone else shipping a tool like this.
+Anyone who gets it can post as you, read your subscribers, and change your billing. It is exactly as sensitive as your password.
 
----
+Never paste it into an issue.
 
----
+**An agent with publish rights can email your entire list.**
+
+The confirmation gate makes that hard to do by accident. It does not make it impossible for a determined bad instruction.
+
+If you are pointing an autonomous agent at this, run it with `SUBSTACK_READ_ONLY=1`.
+
+**Automated subscriber additions are how publications get marked as spam.**
+
+`add_subscriber` exists for people who asked to be added. Importing anyone else is your problem, not Substack's.
+
+**Terms of service.**
+
+Automating your own account through its own web endpoints is not something Substack documents or blesses.
+
+I am not aware of anyone being banned for it. I cannot promise it, and neither can anyone else shipping a tool like this.
 
 ---
 
@@ -554,10 +558,6 @@ Substack's document format has no table node, so a table cannot be rendered nati
 
 ---
 
----
-
----
-
 ## 9. Your data 💾
 
 Nothing is sent anywhere except Substack. There is no telemetry, no analytics, and no third-party service in the path.
@@ -566,7 +566,11 @@ Two files, both in `~/.substack-mcp` (`SUBSTACK_MCP_HOME` moves it):
 
 **`session.json`**, only if you ran `login`. Written `0600`, encrypted with AES-256-GCM under a key derived from this OS account and this machine, which is never stored.
 
-Be clear about what that buys. A copied file is useless elsewhere, and a casual disk or backup read sees ciphertext. It is machine-binding and obfuscation, **not** a secret vault. Code running as you on this machine can re-derive the key, which is exactly the exposure of the environment-variable path too. If you would rather your client held the secret, use env vars.
+Be clear about what that buys. A copied file is useless elsewhere, and a casual disk or backup read sees ciphertext.
+
+It is machine binding, not a vault. Code running as you on this machine can re-derive the key.
+
+That is the same exposure as the environment variable path, which is why environment variables stay fully supported.
 
 **`scheduled-notes.json`**, the local queue for `schedule_note`. Plain JSON, `0600`, containing the text of Notes you have not published yet.
 
@@ -609,10 +613,6 @@ Errors map to typed classes, so the message names the fix rather than saying "Su
 | `NotFoundError` | 404 | No such draft, post or note |
 | `ServerError` | 5xx | Substack's problem |
 | `TimeoutError` | 408 | Our own deadline, no response arrived |
-
----
-
----
 
 ---
 
@@ -683,14 +683,16 @@ Some custom domains sit behind Cloudflare, which can answer 403 with `error code
 
 ---
 
----
-
 ## FAQ ❓
 
 <details>
 <summary><b>What is an MCP server?</b></summary>
 
-An MCP server is a standard way to give an AI assistant real access to a tool. Instead of describing your Substack to Claude and hoping it guesses right, the server exposes your actual drafts, subscribers and analytics as things the assistant can read and act on. MCP is the protocol they agree on, so one server works in Claude, Cursor, Windsurf and anything else that speaks it.
+An MCP server is a standard way to give an AI assistant real access to a tool.
+
+Instead of describing your Substack to Claude and hoping it guesses right, the server exposes your actual drafts, subscribers and analytics as things the assistant can read and act on.
+
+MCP is the protocol they agree on, so one server works in Claude, Cursor, Windsurf and anything else that speaks it.
 
 </details>
 
@@ -718,14 +720,24 @@ Nothing goes anywhere except Substack. There is no backend, no telemetry, and no
 <details>
 <summary><b>What can it do that I cannot do in the Substack dashboard already?</b></summary>
 
-Three things the dashboard cannot. It reads the engagement metrics Substack will let you filter on but never shows you, through `export_subscribers`. It pulls another writer's posts and Notes with their like and restack counts so you can rank by what actually worked. And it turns markdown into real Substack formatting, including embeds and paywalls, which is not something the editor does for anything written outside it.
+Three things the dashboard cannot do.
+
+It reads the engagement metrics Substack lets you filter on but never shows you, through `export_subscribers`.
+
+It pulls another writer's posts and Notes with their like and restack counts, so you can rank by what actually worked.
+
+And it turns markdown into real Substack formatting, including embeds and paywalls, which the editor does not do for anything written outside it.
 
 </details>
 
 <details>
 <summary><b>Can it delete something by accident?</b></summary>
 
-Not without being told twice. `delete_draft`, `delete_note`, `delete_comment` and `delete_template` are permanent with no trash to recover from, and all four refuse to run unless the call passes `confirm: true`. The same guard covers `publish_draft`, because publishing with `send: true` emails your whole list and an email cannot be unsent. Setting `SUBSTACK_READ_ONLY=1` removes all 24 write tools from the list entirely.
+Not without being told twice. `delete_draft`, `delete_note`, `delete_comment` and `delete_template` are permanent, with no trash to recover from.
+
+All four refuse to run unless the call passes `confirm: true`. The same guard covers `publish_draft`, because publishing with `send: true` emails your whole list and an email cannot be unsent.
+
+Setting `SUBSTACK_READ_ONLY=1` removes all 24 write tools from the list entirely.
 
 </details>
 
@@ -761,9 +773,6 @@ Substack sessions do expire, and when yours does every authenticated tool starts
 <summary><b>How do I disconnect it?</b></summary>
 
 Remove the server from your client's config, which for Claude Code is `claude mcp remove substack`. Then delete `~/.substack-mcp` to remove the stored session and any queued Notes. Nothing is left behind, and nothing was ever stored anywhere but your own machine.
-
-
----
 
 ---
 
