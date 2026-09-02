@@ -6,7 +6,6 @@ description: |
 
 # Substack
 
-65 tools for a Substack publication: drafts, posts, Notes, subscribers, analytics, tags, comments, the reader feed, and research on other people's publications.
 
 ## Before anything else
 

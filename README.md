@@ -136,6 +136,8 @@ Sessions do expire, commonly reported at around 90 days, though I have not measu
 
 ## 4. Connect your client 🔌
 
+The long version, every step with what to do when one fails, is in [references/setup.md](references/setup.md).
+
 Every block below is complete on its own. Pick your client, paste, done.
 
 Replace `example.substack.com` with your publication and `your-connect-sid-value` with the cookie from [section 3](#3-setup).
