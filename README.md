@@ -35,17 +35,18 @@ Built and maintained by [Navid Moazzez](https://navid.me?utm_source=github&utm_m
 
 | | Section | |
 |---|---|---|
-| 1 | [What you can ask it](#1-what-you-can-ask-it) | Real prompts, not features |
-| 2 | [Quick install](#2-quick-install) | One line, no account needed |
-| 3 | [Setup](#3-setup) | Getting your session cookie |
-| 4 | [Connect your client](#4-connect-your-client) | Claude, Cursor, Windsurf, the rest |
-| 5 | [Check it worked](#5-check-it-worked) | And the two things that fail |
-| 6 | [Tools](#6-tools) | All 65, grouped by what they reach |
-| 7 | [Writing safely](#7-writing-safely) | What is guarded and what is not |
-| 8 | [Writing posts](#8-writing-posts) | Markdown, embeds, paywalls |
-| 9 | [Your data](#9-your-data) | What is stored, and where |
-| 10 | [Troubleshooting](#10-troubleshooting) | When something breaks |
-| | [FAQ](#faq) | The questions people actually ask |
+| 1 | [What you can ask it](#1-what-you-can-ask-it-) | Real prompts, not features |
+| 2 | [Quick install](#2-quick-install-) | One line, no account needed |
+| 3 | [Setup](#3-setup-) | Getting your session cookie |
+| 4 | [Connect your client](#4-connect-your-client-) | Claude, Cursor, Windsurf, the rest |
+| 5 | [Check it worked](#5-check-it-worked-) | And the two things that fail |
+| 6 | [What it costs to have connected](#6-what-it-costs-to-have-connected) | Tokens per turn, and how to spend less |
+| 7 | [Tools](#7-tools-) | All 65, grouped by what they reach |
+| 8 | [Writing safely](#8-writing-safely-) | What is guarded and what is not |
+| 9 | [Writing posts](#9-writing-posts-) | Markdown, embeds, paywalls |
+| 10 | [Your data](#10-your-data-) | What is stored, and where |
+| 11 | [Troubleshooting](#11-troubleshooting-) | When something breaks |
+| | [FAQ](#faq-) | The questions people actually ask |
 
 ## 1. What you can ask it 💬
 
@@ -140,7 +141,7 @@ The long version, every step with what to do when one fails, is in [references/s
 
 Every block below is complete on its own. Pick your client, paste, done.
 
-Replace `example.substack.com` with your publication and `your-connect-sid-value` with the cookie from [section 3](#3-setup).
+Replace `example.substack.com` with your publication and `your-connect-sid-value` with the cookie from [section 3](#3-setup-).
 
 ### Claude Code
 
@@ -235,7 +236,29 @@ npx @thenavidm/substack-mcp@latest doctor
 
 Two things account for almost every failure. Node is not on the PATH your client sees, which the tip above covers. Or the session cookie is wrong or expired, which `doctor` names directly.
 
-## 6. Tools 🛠️
+## 6. What it costs to have connected
+
+Every MCP server sends its whole tool list to the model on **every turn**,
+whether you mention it or not. Measured on this one:
+
+| | Sent per turn |
+|---|---|
+| 65 tool definitions, plus the server instructions | **~19,900 tokens** |
+
+That is the price of it being connected at all, before you ask anything. It is
+not unusual, and almost nobody publishes it.
+
+Two ways to spend less.
+
+**Turn it off when you are not using it.** In Claude Code that is
+`@substack` to toggle, and every client has an equivalent.
+
+**Or reach for a shell instead.** A command is not in the context window, so it
+costs nothing on the turns you do not use it. It is not free either: an agent
+still needs the skill file, roughly 1,487 tokens, but only once the subject
+comes up rather than on every turn regardless.
+
+## 7. Tools 🛠️
 
 65 tools. Every one declares whether it reads, writes, or does something that cannot be undone, so your client can show you the difference before anything runs.
 
@@ -420,7 +443,7 @@ Every publication-scoped tool takes an optional `publication` argument, matched 
 
 Ask for a publication that is not connected and the error names the ones that are, rather than failing silently against the wrong Substack.
 
-## 7. Writing safely 🔒
+## 8. Writing safely 🔒
 
 Two positions are common and both are wrong. Ship `publish` and `delete` unguarded, and one mis-parsed instruction emails your entire list. Remove them and call that safety, and you have not made anything safer, you have moved the work back to the human.
 
@@ -500,7 +523,7 @@ Automating your own account through its own web endpoints is not something Subst
 
 I am not aware of anyone being banned for it. I cannot promise it, and neither can anyone else shipping a tool like this.
 
-## 8. Writing posts ✍️
+## 9. Writing posts ✍️
 
 `draft_body` is **not HTML**. It is a JSON ProseMirror document. This is the single most common way a Substack integration goes wrong: send HTML and the API returns 200, then the post renders with the tags visible as literal text. There is no error. You find out by looking at the published post.
 
@@ -546,7 +569,7 @@ Substack's document format has no table node, so a table cannot be rendered nati
 
 `preview_draft_body` shows exactly what a body will produce, including how many embeds were created and whether the paywall registered, without touching anything.
 
-## 9. Your data 💾
+## 10. Your data 💾
 
 Nothing is sent anywhere except Substack. There is no telemetry, no analytics, and no third-party service in the path.
 
@@ -600,7 +623,7 @@ Errors map to typed classes, so the message names the fix rather than saying "Su
 | `ServerError` | 5xx | Substack's problem |
 | `TimeoutError` | 408 | Our own deadline, no response arrived |
 
-## 10. Troubleshooting 🔧
+## 11. Troubleshooting 🔧
 
 Run `npx @thenavidm/substack-mcp@latest doctor` first. It checks credentials, config, connectivity and byline resolution, and names what is wrong.
 
@@ -684,14 +707,14 @@ Substack is a publishing platform for newsletters and blogs. Writers publish pos
 <details>
 <summary><b>Do I need to be technical to use this?</b></summary>
 
-You need to be able to paste a line into a terminal and copy a value out of your browser. That is the whole skill requirement. [Section 3](#3-setup) walks through the browser part click by click, and `doctor` tells you what is wrong in plain language if something does not work.
+You need to be able to paste a line into a terminal and copy a value out of your browser. That is the whole skill requirement. [Section 3](#3-setup-) walks through the browser part click by click, and `doctor` tells you what is wrong in plain language if something does not work.
 
 </details>
 
 <details>
 <summary><b>Is my data sent anywhere? Who can see it?</b></summary>
 
-Nothing goes anywhere except Substack. There is no backend, no telemetry, and no third party in the path. Your session cookie and any queued Notes sit in `~/.substack-mcp` on your own machine, and [section 7](#9-your-data) says exactly what is in each file.
+Nothing goes anywhere except Substack. There is no backend, no telemetry, and no third party in the path. Your session cookie and any queued Notes sit in `~/.substack-mcp` on your own machine, and [section 7](#10-your-data-) says exactly what is in each file.
 
 </details>
 
@@ -729,7 +752,7 @@ It costs nothing. The server is MIT licensed and free, and it talks to your exis
 <details>
 <summary><b>Does it work with ChatGPT or Cursor, or only Claude?</b></summary>
 
-It works with any client that speaks MCP. Claude Code, Claude Desktop, Cursor, Windsurf, VS Code, Zed and Cline are all covered in [section 2](#2-quick-install), and anything else that supports MCP over stdio will work with the same three settings.
+It works with any client that speaks MCP. Claude Code, Claude Desktop, Cursor, Windsurf, VS Code, Zed and Cline are all covered in [section 2](#2-quick-install-), and anything else that supports MCP over stdio will work with the same three settings.
 
 </details>
 
