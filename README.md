@@ -312,7 +312,7 @@ later on the days it earns its place.
 
 65 tools. Every one declares whether it reads, writes, or does something that cannot be undone, so your client can show you the difference before anything runs.
 
-Every publication-scoped tool takes an optional `publication` argument to pick which connected Substack it acts on. See [section 7](#several-publications).
+Every publication-scoped tool takes an optional `publication` argument to pick which connected Substack it acts on. See [Several publications](#several-publications).
 
 ### Drafts
 
@@ -809,7 +809,7 @@ You need to be able to paste a line into a terminal and copy a value out of your
 <details>
 <summary><b>Is my data sent anywhere? Who can see it?</b></summary>
 
-Nothing goes anywhere except Substack. There is no backend, no telemetry, and no third party in the path. Your session cookie and any queued Notes sit in `~/.substack-mcp` on your own machine, and [section 7](#10-your-data-) says exactly what is in each file.
+Nothing goes anywhere except Substack. There is no backend, no telemetry, and no third party in the path. Your session cookie and any queued Notes sit in `~/.substack-mcp` on your own machine, and [section 10](#10-your-data-) says exactly what is in each file.
 
 </details>
 
@@ -840,7 +840,7 @@ Setting `SUBSTACK_READ_ONLY=1` removes all 24 write tools from the list entirely
 <details>
 <summary><b>Does it cost anything?</b></summary>
 
-It costs nothing. The server is MIT licensed and free, and it talks to your existing Substack account. You do not need a paid Substack plan, though some analytics reports only return data if your publication has paid subscribers.
+It costs nothing. The server is MIT licensed and free, and Substack itself is free to write on. Some analytics reports only return data once your publication has paid subscribers, because there is nothing to report until then.
 
 </details>
 
