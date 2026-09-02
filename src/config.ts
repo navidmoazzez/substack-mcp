@@ -151,7 +151,7 @@ export function selectPublication(
 ): Credentials {
   if (config.publications.length === 0) {
     throw new Error(
-      "No Substack credentials configured. Set SUBSTACK_PUBLICATION_URL and SUBSTACK_SESSION_TOKEN, or run `substack-mcp login`. See https://github.com/navidmoazzez/substack-mcp#2-connect-your-account",
+      "No Substack credentials configured. Set SUBSTACK_PUBLICATION_URL and SUBSTACK_SESSION_TOKEN, or run `substack-mcp login`. See https://github.com/navidmoazzez/substack-mcp-cli#3-setup-",
     );
   }
   if (!hint) return config.publications[0]!;

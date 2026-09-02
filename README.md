@@ -734,6 +734,51 @@ Some custom domains sit behind Cloudflare, which can answer 403 with `error code
 | `SUBSTACK_MCP_TOKEN` | | Bearer token for HTTP |
 | `SUBSTACK_MCP_ALLOWED_ORIGINS` | | Extra origins beyond localhost |
 
+## Environment variables
+
+Two are required. Everything else has a working default and exists so you can
+tighten or tune it.
+
+**Credentials**
+
+| Variable | What it is |
+|---|---|
+| `SUBSTACK_PUBLICATION_URL` | Your publication, e.g. `example.substack.com` |
+| `SUBSTACK_SESSION_TOKEN` | The `connect.sid` cookie value. [Section 3](#3-setup-) shows where to find it |
+| `SUBSTACK_USER_ID` | Optional. Resolved automatically when absent |
+| `SUBSTACK_PUBLICATIONS` | A JSON array instead, for several publications at once |
+
+**Safety**
+
+| Variable | Default | What it does |
+|---|---|---|
+| `SUBSTACK_READ_ONLY` | `0` | `1` hides every write, leaving the 42 reading tools |
+| `SUBSTACK_ALLOW_DESTRUCTIVE` | `1` | `0` keeps ordinary writes, blocks publishing and deleting |
+| `SUBSTACK_AUDIT_LOG` | none | Path to an append-only log of every attempted write |
+
+**Tuning**
+
+| Variable | Default | What it does |
+|---|---|---|
+| `SUBSTACK_REQUEST_TIMEOUT_MS` | `30000` | Per-request deadline |
+| `SUBSTACK_MIN_REQUEST_INTERVAL_MS` | `350` | Spacing between requests |
+| `SUBSTACK_MAX_RETRIES` | `3` | Retries on rate limits and 5xx |
+| `SUBSTACK_USER_AGENT` | a browser UA | Sent on every request |
+| `SUBSTACK_MCP_HOME` | `~/.substack-mcp` | Where the session and queued Notes are kept |
+
+**Serving over HTTP** (`--http`, see [SECURITY.md](SECURITY.md) before you use it)
+
+| Variable | Default | What it does |
+|---|---|---|
+| `SUBSTACK_MCP_PORT` | `8788` | Port to bind |
+| `SUBSTACK_MCP_HOST` | `127.0.0.1` | Interface to bind |
+| `SUBSTACK_MCP_TOKEN` | none | Bearer token. Required in practice if you bind beyond localhost |
+| `SUBSTACK_MCP_ALLOWED_ORIGINS` | none | Comma-separated origins allowed to connect |
+
+## Versions
+
+See [CHANGELOG.md](CHANGELOG.md).
+
 ## 12. FAQ ❓
 
 <details>
