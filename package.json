@@ -5,7 +5,8 @@
   "type": "module",
   "main": "./dist/index.js",
   "bin": {
-    "substack-mcp": "dist/index.js"
+    "substack-mcp": "dist/index.js",
+    "substack-cli": "dist/index.js"
   },
   "engines": {
     "node": ">=20"
@@ -22,7 +23,8 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.18.0",
-    "zod": "^3.23.8"
+    "zod": "^3.23.8",
+    "zod-to-json-schema": "^3.24.1"
   },
   "peerDependencies": {
     "playwright": ">=1.40.0"

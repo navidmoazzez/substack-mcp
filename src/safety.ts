@@ -33,11 +33,21 @@ export type Risk =
   /** Irreversible, or visible to other people the moment it runs. */
   | "destructive";
 
+/** Which surface a guard is protecting, so refusals name the right syntax. */
+export type Surface = "mcp" | "cli";
+
 export class WriteGuard {
   private readonly config: Config;
+  private readonly surface: Surface;
 
-  constructor(config: Config) {
+  constructor(config: Config, surface: Surface = "mcp") {
     this.config = config;
+    this.surface = surface;
+  }
+
+  /** `--confirm` in a terminal, `confirm: true` in a tool call. */
+  private get confirmFlag(): string {
+    return this.surface === "cli" ? "--confirm" : "confirm: true";
   }
 
   get readOnly(): boolean {
@@ -72,7 +82,7 @@ export class WriteGuard {
       if (confirm !== true) {
         this.audit(tool, summary, "blocked: unconfirmed");
         throw new WriteBlockedError(
-          `${tool} is irreversible: ${summary}. Nothing has been changed. Re-run with confirm: true if that is what you want.`,
+          `${tool} is irreversible: ${summary}. Nothing has been changed. Re-run with ${this.confirmFlag} if that is what you want.`,
         );
       }
     }

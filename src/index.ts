@@ -12,6 +12,7 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { buildServer, VERSION } from "./server.js";
 import { loadConfig } from "./config.js";
 import { httpOptionsFromEnv, startHttpServer } from "./transport/http.js";
+import { runCli, isCliCommand } from "./cli.js";
 
 const HELP = `substack-mcp ${VERSION}
 
@@ -34,13 +35,48 @@ Options:
   SUBSTACK_REQUEST_TIMEOUT_MS       per-request deadline, default 30000
   SUBSTACK_MIN_REQUEST_INTERVAL_MS  spacing between requests, default 350
   SUBSTACK_AUDIT_LOG                append-only log of every attempted write
+  SUBSTACK_MAX_RETRIES              retries on rate limits and 5xx, default 3
+  SUBSTACK_USER_AGENT               override the browser UA sent to Substack
 
 https://github.com/navidmoazzez/substack-mcp
 `;
 
+/**
+ * One entry point, two programs. `substack-mcp` is the server and must stay
+ * silent on stdout; `substack-cli` is the one a person types. Running the CLI
+ * binary with no arguments is someone asking what they can type, so it lists
+ * the commands rather than hanging on a transport that will never speak.
+ */
+function invokedAsCli(): boolean {
+  const name = (process.argv[1] ?? "").split("/").pop() ?? "";
+  return name.startsWith("substack-cli");
+}
+
 async function main(): Promise<void> {
   const argv = process.argv.slice(2);
   const command = argv[0];
+
+  if (invokedAsCli() && argv.length === 0) {
+    process.exitCode = await runCli(["tools"]);
+    return;
+  }
+
+  // Checked before --help and --version so `<tool> --help` reaches the tool.
+  // A bare `--help` starts with a dash, so it falls through to the block below.
+  if (isCliCommand(argv)) {
+    process.exitCode = await runCli(argv);
+    return;
+  }
+
+  // An unknown word used to fall through and start the server, which then sat
+  // waiting on stdin: a typo looked like a hang, and scripts saw exit code 0.
+  if (invokedAsCli() && command !== undefined && !command.startsWith("-")) {
+    process.stderr.write(
+      `${JSON.stringify({ error: `Unknown command '${command}'. Run \`substack-cli\` to list them.` }, null, 2)}\n`,
+    );
+    process.exitCode = 1;
+    return;
+  }
 
   if (argv.includes("--help") || argv.includes("-h") || command === "help") {
     process.stdout.write(HELP);
