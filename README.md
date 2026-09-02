@@ -74,7 +74,7 @@ can do, the other can.
 
 ## Contents 📑
 
-| | Section | |
+| # | Section | What is in it |
 |---|---|---|
 | 1 | [What you can ask it](#1-what-you-can-ask-it-) | Real prompts, not features |
 | 2 | [Quick install](#2-quick-install-) | One line, no account needed |
@@ -199,7 +199,7 @@ Run `/mcp` inside Claude Code and `substack` should be listed. Remove it later w
 
 Open **Settings**, then **Developer**, then **Edit Config**. That reveals `claude_desktop_config.json`. Or go straight there:
 
-| | |
+| System | Config file |
 |---|---|
 | macOS | `~/Library/Application Support/Claude/claude_desktop_config.json` |
 | Windows | `%APPDATA%\Claude\claude_desktop_config.json` |
@@ -281,7 +281,7 @@ Two things account for almost every failure. Node is not on the PATH your client
 
 Both surfaces carry the same 65 tools. They differ in when you pay for them.
 
-| | MCP server | CLI |
+| Question | MCP server | CLI |
 |---|---|---|
 | Loaded every turn | **~19,900 tokens** | nothing |
 | Loaded when Substack comes up | nothing more | ~1,500, once |
@@ -316,7 +316,7 @@ Every publication-scoped tool takes an optional `publication` argument to pick w
 
 ### Drafts
 
-| Tool | | What it does |
+| Tool | Risk | What it does |
 |---|---|---|
 | `create_draft` | write | Create a draft from markdown. Private until you publish |
 | `update_draft` | write | Change any field. Only what you pass is touched |
@@ -337,7 +337,7 @@ Every publication-scoped tool takes an optional `publication` argument to pick w
 
 ### Posts
 
-| Tool | | What it does |
+| Tool | Risk | What it does |
 |---|---|---|
 | `list_posts` | read | Published posts, newest first |
 | `get_post` | read | Read a post by slug, from **any** publication |
@@ -350,7 +350,7 @@ Every publication-scoped tool takes an optional `publication` argument to pick w
 
 Notes have no draft state on Substack. Writing one publishes it, immediately and publicly.
 
-| Tool | | What it does |
+| Tool | Risk | What it does |
 |---|---|---|
 | `publish_note` | **destructive** | Live and public at once. Needs `confirm` |
 | `publish_note_with_link` | **destructive** | With a link preview card. Needs `confirm` |
@@ -368,7 +368,7 @@ Nothing is ever dropped. For scheduling that does not depend on your laptop, see
 
 ### Subscribers
 
-| Tool | | What it does |
+| Tool | Risk | What it does |
 |---|---|---|
 | `list_subscribers` | read | Filter on 48 columns with 18 operators |
 | `export_subscribers` | read | The only way to actually **read** engagement metrics |
@@ -398,7 +398,7 @@ Two things about `export_subscribers`, both verified against the live API:
 
 ### Analytics
 
-| Tool | | What it does |
+| Tool | Risk | What it does |
 |---|---|---|
 | `get_analytics` | read | One of 16 reports, listed below |
 | `get_dashboard_summary` | read | The headline numbers |
@@ -411,7 +411,7 @@ Two things about `export_subscribers`, both verified against the live API:
 
 ### Tags and comments
 
-| Tool | | What it does |
+| Tool | Risk | What it does |
 |---|---|---|
 | `list_publication_tags` | read | Every tag on the publication |
 | `create_tag` | write | Create one |
@@ -424,7 +424,7 @@ Two things about `export_subscribers`, both verified against the live API:
 
 ### Reading Substack
 
-| Tool | | What it does |
+| Tool | Risk | What it does |
 |---|---|---|
 | `list_subscriptions` | read | What this account subscribes to |
 | `list_reader_posts` | read | Your inbox |
@@ -436,7 +436,7 @@ Two things about `export_subscribers`, both verified against the live API:
 
 ### Publication
 
-| Tool | | What it does |
+| Tool | Risk | What it does |
 |---|---|---|
 | `get_publication_settings` | read | Every setting on the settings page |
 | `update_publication_settings` | write | Change them, including theme colours |
@@ -450,7 +450,7 @@ Two things about `export_subscribers`, both verified against the live API:
 
 ### Templates
 
-| Tool | | What it does |
+| Tool | Risk | What it does |
 |---|---|---|
 | `list_templates` | read | Your saved post templates |
 | `create_template` | write | Save one |
@@ -459,7 +459,7 @@ Two things about `export_subscribers`, both verified against the live API:
 
 ### Research
 
-| Tool | | What it does |
+| Tool | Risk | What it does |
 |---|---|---|
 | `research_creator_posts` | read | Another writer's posts **with engagement numbers** |
 | `research_creator_notes` | read | Their Notes, ranked by likes or restacks |
@@ -470,7 +470,7 @@ Two things about `export_subscribers`, both verified against the live API:
 
 ### Images
 
-| Tool | | What it does |
+| Tool | Risk | What it does |
 |---|---|---|
 | `upload_image` | write | Upload from a URL or a local file, get a CDN URL back |
 
