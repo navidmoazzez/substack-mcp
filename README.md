@@ -827,9 +827,11 @@ Remove the server from your client's config, which for Claude Code is `claude mc
 
 </details>
 
-## Questions
+## Questions 💬
 
-Run into a problem or have a question? [Open an issue](https://github.com/navidmoazzez/substack-mcp/issues) and I will help.
+Run into a problem or have a question? [Open an issue](https://github.com/navidmoazzez/substack-mcp-cli/issues) and I will help.
+
+Found a security vulnerability? [Report it privately](https://github.com/navidmoazzez/substack-mcp-cli/security/advisories/new) instead, never as an issue. [SECURITY.md](SECURITY.md) covers what this holds, the write-safety model, and running it over HTTP.
 
 ## About the author 👋
 
@@ -855,10 +857,6 @@ If this is useful, star the repo and come say hi on [X](https://x.com/thenavidm)
 | [zod](https://github.com/colinhacks/zod) | MIT | Tool argument schemas and validation |
 
 [Playwright](https://github.com/microsoft/playwright) is an optional peer dependency, used only by `login --playwright` and never loaded by the server.
-
-## Security 🛡️
-
-Found a vulnerability? [Report it privately](https://github.com/navidmoazzez/substack-mcp/security/advisories/new), not as a public issue. [SECURITY.md](SECURITY.md) covers what this server holds, the write-safety model, and running it over HTTP.
 
 ## License ⚖️
 
