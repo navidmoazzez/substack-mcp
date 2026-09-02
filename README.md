@@ -14,22 +14,9 @@ Substack has no public API, which is why your assistant cannot see any of it, an
 
 This one speaks Substack's own document format. Ask for a draft and you get a draft, with the YouTube link as a player and the paywall where you put it.
 
-```
-You: which of my posts actually converted free readers to paid?
-
-Claude: Ranking your last 40 posts by paid signups.
-
-  1. "The part nobody tells you about pricing"    18 paid
-  2. "I audited 60 newsletters. Here is the gap"  11 paid
-  3. "Why your welcome email is costing you"       9 paid
-
-  All three are teardowns with a specific number in the title.
-  Your five worst converters are all essays with abstract titles.
-```
-
 Built and maintained by [Navid Moazzez](https://navid.me?utm_source=github&utm_medium=readme&utm_campaign=substack-mcp).
 
-<img src="https://cdn.navid.media/repos/substack-mcp.gif?v=2" alt="Claude Code using the Substack MCP server" width="520">
+<img src="https://cdn.navid.media/repos/substack-mcp.gif?v=5" alt="Claude Code using the Substack MCP server" width="520">
 
 ## Contents 📑
 
