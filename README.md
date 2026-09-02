@@ -16,7 +16,7 @@ This one speaks Substack's own document format. Ask for a draft and you get a dr
 
 Built and maintained by [Navid Moazzez](https://navid.me?utm_source=github&utm_medium=readme&utm_campaign=substack-mcp).
 
-<img src="https://cdn.navid.media/repos/substack-mcp.gif?v=5" alt="Claude Code using the Substack MCP server" width="520">
+<img src="https://cdn.navid.media/repos/substack-mcp.gif?v=7" alt="Claude Code using the Substack MCP server" width="520">
 
 ## Contents 📑
 
