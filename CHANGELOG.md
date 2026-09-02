@@ -1,4 +1,4 @@
-# Substack MCP Versions
+# Substack MCP changelog
 
 | Component | Version | Last Updated |
 |-----------|---------|--------------|
