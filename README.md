@@ -76,7 +76,6 @@ can do, the other can.
 
 | | Section | |
 |---|---|---|
-| | [Two ways to use it](#two-ways-to-use-it) | The CLI and the MCP server |
 | 1 | [What you can ask it](#1-what-you-can-ask-it-) | Real prompts, not features |
 | 2 | [Quick install](#2-quick-install-) | One line, no account needed |
 | 3 | [Setup](#3-setup-) | Getting your session cookie |
@@ -88,7 +87,7 @@ can do, the other can.
 | 9 | [Writing posts](#9-writing-posts-) | Markdown, embeds, paywalls |
 | 10 | [Your data](#10-your-data-) | What is stored, and where |
 | 11 | [Troubleshooting](#11-troubleshooting-) | When something breaks |
-| | [FAQ](#faq-) | The questions people actually ask |
+| 12 | [FAQ](#12-faq-) | The questions people actually ask |
 
 ## 1. What you can ask it 💬
 
@@ -735,7 +734,7 @@ Some custom domains sit behind Cloudflare, which can answer 403 with `error code
 | `SUBSTACK_MCP_TOKEN` | | Bearer token for HTTP |
 | `SUBSTACK_MCP_ALLOWED_ORIGINS` | | Extra origins beyond localhost |
 
-## FAQ ❓
+## 12. FAQ ❓
 
 <details>
 <summary><b>What is an MCP server?</b></summary>
