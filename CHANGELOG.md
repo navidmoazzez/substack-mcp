@@ -2,7 +2,48 @@
 
 | Component | Version | Last Updated |
 |-----------|---------|--------------|
-| substack-mcp | 2.1.0 | 2026-09-01 |
+| substack-mcp-cli | 2.2.0 | 2026-09-02 |
+
+---
+
+## 2.2.0
+
+A CLI, and a rename to match.
+
+### Every tool is now a shell command
+
+All 65 tools run from the terminal. The command is the tool name: `create_draft`
+runs as `create-draft`, and the underscore spelling works too. Flags, help text
+and validation come from the same schema the MCP tool declares, so both surfaces
+accept the same arguments and a tool added tomorrow is a command tomorrow.
+
+`--confirm`, `SUBSTACK_READ_ONLY`, `SUBSTACK_ALLOW_DESTRUCTIVE` and the audit log
+behave identically whichever surface you use. `substack-cli schema <command>`
+prints the exact JSON Schema an MCP client receives, so the two surfaces can be
+checked against each other rather than taken on trust.
+
+### Two binaries
+
+`substack-mcp` is the server your AI app runs. `substack-cli` is the one you
+type, and run bare it lists every command.
+
+### Renamed to substack-mcp-cli
+
+So the name says both surfaces. The server binary is still `substack-mcp`, so
+existing client configs keep working. The package is now
+`@thenavidm/substack-mcp-cli`.
+
+### Refusals name the right syntax
+
+A blocked write used to say `confirm: true` whichever surface you were on. In a
+terminal it now says `--confirm`.
+
+### Fixed
+
+`SUBSTACK_MAX_RETRIES` and `SUBSTACK_USER_AGENT` were read by the code but never
+documented in `--help`. A new test compares the two, so that cannot drift again.
+
+25 new tests, 95 total.
 
 ---
 

@@ -1,6 +1,6 @@
 {
-  "name": "@thenavidm/substack-mcp",
-  "version": "2.1.1",
+  "name": "@thenavidm/substack-mcp-cli",
+  "version": "2.2.0",
   "description": "Substack MCP server for Claude Code and AI agents. 65 tools for drafts, posts, Notes, subscribers, analytics, tags, comments and researching other publications.",
   "type": "module",
   "main": "./dist/index.js",
@@ -41,13 +41,13 @@
   },
   "license": "MIT",
   "author": "Navid Moazzez (https://navid.me)",
-  "homepage": "https://navid.me",
+  "homepage": "https://github.com/navidmoazzez/substack-mcp-cli#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/navidmoazzez/substack-mcp.git"
+    "url": "git+https://github.com/navidmoazzez/substack-mcp-cli.git"
   },
   "bugs": {
-    "url": "https://github.com/navidmoazzez/substack-mcp/issues"
+    "url": "https://github.com/navidmoazzez/substack-mcp-cli/issues"
   },
   "keywords": [
     "mcp",

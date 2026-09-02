@@ -1,14 +1,17 @@
 <img src="https://cdn.navid.media/connectors/substack-icon.png" alt="Substack" width="88">
 
-# Substack MCP
+# Substack MCP Server & CLI
 
-[![npm](https://img.shields.io/npm/v/@thenavidm%2Fsubstack-mcp?color=orange&label=npm)](https://www.npmjs.com/package/@thenavidm/substack-mcp)
+[![npm](https://img.shields.io/npm/v/@thenavidm%2Fsubstack-mcp-cli?color=orange&label=npm)](https://www.npmjs.com/package/@thenavidm/substack-mcp-cli)
 [![License](https://img.shields.io/badge/License-MIT-green)](./LICENSE)
 [![YouTube](https://img.shields.io/badge/YouTube-@thenavidm-red?logo=youtube&logoColor=white)](https://youtube.com/@thenavidm?sub_confirmation=1)
 [![X](https://img.shields.io/badge/X-@thenavidm-black?logo=x)](https://x.com/thenavidm)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-thenavidm-0A66C2?logo=linkedin&logoColor=white)](https://linkedin.com/in/thenavidm)
 
-Substack MCP server for Claude Code and AI agents. 65 tools for drafts, posts, Notes, subscribers, analytics, tags, comments, and researching other writers.
+Substack MCP server and CLI for Claude Code and AI agents. 65 tools for drafts, posts, Notes, subscribers, analytics, tags, comments, and researching other writers.
+
+One install gives you both surfaces, the same tools under the same names,
+covering everything the dashboard does and several things it cannot.
 
 Substack has no public API, which is why your assistant cannot see any of it, and why most things that claim to connect publish posts with the HTML tags showing.
 
@@ -18,16 +21,68 @@ Built and maintained by [Navid Moazzez](https://navid.me?utm_source=github&utm_m
 
 <img src="https://cdn.navid.media/repos/substack-mcp.gif?v=7" alt="Claude Code using the Substack MCP server" width="520">
 
+## Two ways to use it
+
+### Command line
+
+`substack-cli` in your terminal, for scripting, cron, pipes, or a quick question
+without opening anything:
+
+```bash
+substack-cli                                          # every command, one line each
+substack-cli list-drafts                              # what you have in progress
+substack-cli get-dashboard-summary                    # subscribers, revenue, recent posts
+substack-cli rank-posts --limit 10                    # your best performing posts
+substack-cli research-creator-posts --handle someone  # study another writer
+substack-cli create-draft --title "Draft" --body "..."
+substack-cli <command> --help                         # what any command takes
+```
+
+`--confirm` is the shell spelling of the confirmation that publishing, deleting
+and posting Notes require. `--json` gives JSON, `--compact` puts it on one line,
+and errors are JSON on stderr whichever you pick.
+
+`substack-cli schema <command>` prints the exact JSON Schema an MCP client
+receives for that tool, which is how you can check the two surfaces really are
+one thing.
+
+### MCP server, for AI agents
+
+`substack-mcp` is what Claude Code, Claude Desktop, Cursor and the rest launch.
+You never run it by hand:
+
+```bash
+claude mcp add substack \
+  -e SUBSTACK_PUBLICATION_URL=example.substack.com \
+  -e SUBSTACK_SESSION_TOKEN=xxxxx \
+  -- npx -y @thenavidm/substack-mcp-cli
+```
+
+Then just ask: _"which post drove the most paid conversions last month?"_
+
+### Which one
+
+| What you are doing | Use |
+|---|---|
+| Inside a conversation with an agent | MCP |
+| On claude.ai or your phone | MCP, there is no shell there |
+| Piping, scripting, cron, CI | CLI |
+| A one-off question in a terminal | CLI |
+
+They are the same program reading the same tool definitions, so anything one
+can do, the other can.
+
 ## Contents 📑
 
 | | Section | |
 |---|---|---|
+| | [Two ways to use it](#two-ways-to-use-it) | The CLI and the MCP server |
 | 1 | [What you can ask it](#1-what-you-can-ask-it-) | Real prompts, not features |
 | 2 | [Quick install](#2-quick-install-) | One line, no account needed |
 | 3 | [Setup](#3-setup-) | Getting your session cookie |
 | 4 | [Connect your client](#4-connect-your-client-) | Claude, Cursor, Windsurf, the rest |
 | 5 | [Check it worked](#5-check-it-worked-) | And the two things that fail |
-| 6 | [What it costs to have connected](#6-what-it-costs-to-have-connected) | Tokens per turn, and how to spend less |
+| 6 | [Which surface, and what each costs](#6-which-surface-and-what-each-costs) | Tokens per turn, and how to spend less |
 | 7 | [Tools](#7-tools-) | All 65, grouped by what they reach |
 | 8 | [Writing safely](#8-writing-safely-) | What is guarded and what is not |
 | 9 | [Writing posts](#9-writing-posts-) | Markdown, embeds, paywalls |
@@ -54,7 +109,7 @@ The last one is the point. It reads your existing posts, writes a new draft in y
 Node 20 or newer. Nothing else.
 
 ```bash
-npx -y @thenavidm/substack-mcp@latest --version
+npx -y @thenavidm/substack-mcp-cli@latest --version
 ```
 
 That is the whole install. `npx` fetches it on demand, so there is nothing to update later.
@@ -82,7 +137,7 @@ Substack has no public API and no OAuth. Everything here runs on your browser se
 ### Option A: paste the cookie (fastest, recommended)
 
 ```bash
-npx @thenavidm/substack-mcp@latest login
+npx @thenavidm/substack-mcp-cli@latest login
 ```
 
 It asks for your publication URL and the cookie, resolves your user id, and stores the result encrypted. Then you can leave the `env` block out of your client config entirely.
@@ -98,7 +153,7 @@ Turn off ad blockers first. Some of them strip the cookie from that panel.
 ### Option B: read it from the Chrome you already have open
 
 ```bash
-npx @thenavidm/substack-mcp@latest login --playwriter
+npx @thenavidm/substack-mcp-cli@latest login --playwriter
 ```
 
 Uses [Playwriter](https://playwriter.dev) to read the cookie out of your running Chrome, where you are already signed in. No browser launch, no sign-in, no CAPTCHA. Requires Playwriter and its extension.
@@ -107,7 +162,7 @@ Uses [Playwriter](https://playwriter.dev) to read the cookie out of your running
 
 ```bash
 npm i -g playwright && npx playwright install chromium
-npx @thenavidm/substack-mcp@latest login --playwright
+npx @thenavidm/substack-mcp-cli@latest login --playwright
 ```
 
 A browser opens and waits up to ten minutes for you to sign in, CAPTCHA and emailed link included. This is much the slowest option, and the only one that works on a machine with no Chrome, or in CI.
@@ -136,7 +191,7 @@ Replace `example.substack.com` with your publication and `your-connect-sid-value
 claude mcp add substack \
   -e SUBSTACK_PUBLICATION_URL=example.substack.com \
   -e SUBSTACK_SESSION_TOKEN=your-connect-sid-value \
-  -- npx -y @thenavidm/substack-mcp@latest
+  -- npx -y @thenavidm/substack-mcp-cli@latest
 ```
 
 Run `/mcp` inside Claude Code and `substack` should be listed. Remove it later with `claude mcp remove substack`.
@@ -156,7 +211,7 @@ Open **Settings**, then **Developer**, then **Edit Config**. That reveals `claud
   "mcpServers": {
     "substack": {
       "command": "npx",
-      "args": ["-y", "@thenavidm/substack-mcp@latest"],
+      "args": ["-y", "@thenavidm/substack-mcp-cli@latest"],
       "env": {
         "SUBSTACK_PUBLICATION_URL": "example.substack.com",
         "SUBSTACK_SESSION_TOKEN": "your-connect-sid-value"
@@ -216,34 +271,43 @@ It binds to `127.0.0.1` and serves `/health`. To reach it from elsewhere set `SU
 ## 5. Check it worked 🩺
 
 ```bash
-npx @thenavidm/substack-mcp@latest doctor
+npx @thenavidm/substack-mcp-cli@latest doctor
 ```
 
 `doctor` runs the checks in order and names the actual problem, rather than leaving you to guess which of six things is wrong.
 
 Two things account for almost every failure. Node is not on the PATH your client sees, which the tip above covers. Or the session cookie is wrong or expired, which `doctor` names directly.
 
-## 6. What it costs to have connected
+## 6. Which surface, and what each costs
 
-Every MCP server sends its whole tool list to the model on **every turn**,
-whether you mention it or not. Measured on this one:
+Both surfaces carry the same 65 tools. They differ in when you pay for them.
 
-| | Sent per turn |
-|---|---|
-| 65 tool definitions, plus the server instructions | **~19,900 tokens** |
+| | MCP server | CLI |
+|---|---|---|
+| Loaded every turn | **~19,900 tokens** | nothing |
+| Loaded when Substack comes up | nothing more | ~1,500, once |
+| Works on claude.ai and mobile | yes | no, there is no shell there |
+| Works in a script, cron or CI | no | yes |
+| You invoke it by | asking in plain language | typing a command |
 
-That is the price of it being connected at all, before you ask anything. It is
-not unusual, and almost nobody publishes it.
+An MCP server sends its whole tool list to the model on **every turn**, whether
+you mention Substack or not. That is the price of being connected at all, before
+you ask anything. It is not unusual, and almost nobody publishes it.
 
-Two ways to spend less.
+Over twenty turns where Substack comes up once, that is roughly 398,000 tokens
+against 1,600. When the whole conversation is about your publication, the gap
+closes and the server is the better experience, because you ask in plain
+language instead of remembering flags.
 
-**Turn it off when you are not using it.** In Claude Code that is
+### Spending less
+
+**Turn the server off when you are not using Substack.** In Claude Code that is
 `@substack` to toggle, and every client has an equivalent.
+`SUBSTACK_READ_ONLY=1` drops it to the 42 reading tools.
 
-**Or reach for a shell instead.** A command is not in the context window, so it
-costs nothing on the turns you do not use it. It is not free either: an agent
-still needs the skill file, roughly 1,487 tokens, but only once the subject
-comes up rather than on every turn regardless.
+**Or install the CLI and skip the server.** All 65 tools stay reachable, the
+standing cost falls to roughly a hundred tokens, and you connect the server
+later on the days it earns its place.
 
 ## 7. Tools 🛠️
 
@@ -612,7 +676,7 @@ Errors map to typed classes, so the message names the fix rather than saying "Su
 
 ## 11. Troubleshooting 🔧
 
-Run `npx @thenavidm/substack-mcp@latest doctor` first. It checks credentials, config, connectivity and byline resolution, and names what is wrong.
+Run `npx @thenavidm/substack-mcp-cli@latest doctor` first. It checks credentials, config, connectivity and byline resolution, and names what is wrong.
 
 **"Substack rejected the session"** Your cookie expired. Get a fresh `connect.sid`, or run `login` again.
 
