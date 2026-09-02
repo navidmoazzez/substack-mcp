@@ -206,6 +206,42 @@ export function parseArgs(argv: string[], flags: Flag[]): Record<string, unknown
 
 type Format = "text" | "json" | "compact";
 
+/** Exit codes, so a script can branch without parsing the message. */
+export const EXIT = {
+  ok: 0, usage: 2, notFound: 3, auth: 4, api: 5, rateLimited: 7, config: 10,
+} as const;
+
+/** Map a thrown error onto one of those, from the shape the API gave back. */
+export function exitCodeFor(error: unknown): number {
+  const e = error as { status?: number; code?: string; message?: string };
+  const status = e?.status;
+  const text = `${e?.code ?? ""} ${e?.message ?? ""}`.toLowerCase();
+  if (status === 429 || /rate ?limit/.test(text)) return EXIT.rateLimited;
+  if (status === 401 || status === 403 || /auth|credential|token|cookie|session/.test(text)) return EXIT.auth;
+  if (status === 404 || /not found/.test(text)) return EXIT.notFound;
+  if (/not configured|missing .*env|config/.test(text)) return EXIT.config;
+  if (typeof status === "number" && status >= 500) return EXIT.api;
+  return EXIT.api;
+}
+
+/**
+ * `--select id,post.title` keeps only the named fields. Dotted paths descend,
+ * arrays are traversed element-wise. This is what makes a long feed affordable.
+ */
+export function selectFields(data: unknown, paths: string[]): unknown {
+  if (Array.isArray(data)) return data.map((d) => selectFields(d, paths));
+  if (data === null || typeof data !== "object") return data;
+  const out: Record<string, unknown> = {};
+  for (const path of paths) {
+    const [head, ...rest] = path.split(".");
+    if (head === undefined) continue;
+    const value = (data as Record<string, unknown>)[head];
+    if (value === undefined) continue;
+    out[head] = rest.length ? selectFields(value, [rest.join(".")]) : value;
+  }
+  return out;
+}
+
 /**
  * Print a handler result.
  *
@@ -294,6 +330,8 @@ function renderToolHelp(spec: AnyToolSpec): string {
   lines.push(`Output:`);
   lines.push(`  --json                          force JSON`);
   lines.push(`  --compact                       force single-line JSON`);
+  lines.push(`  --agent                         machine mode: JSON, compact, no prompts, no colour`);
+  lines.push(`  --select <a,b.c>                keep only these fields, dotted paths descend`);
   lines.push(``);
   lines.push(`Risk: ${spec.risk}${spec.public ? ", public" : ""}`);
   lines.push(``);
@@ -378,8 +416,28 @@ export async function runCli(argv: string[]): Promise<number> {
     return 0;
   }
 
-  const format: Format = rest.includes("--compact") ? "compact" : rest.includes("--json") ? "json" : "text";
-  const toolArgv = rest.filter((token) => token !== "--json" && token !== "--compact");
+  // `--agent` is the whole machine-readable posture in one flag, so an agent
+  // does not have to remember four and silently forget one.
+  const agent = rest.includes("--agent");
+  const format: Format =
+    rest.includes("--compact") || agent ? "compact" : rest.includes("--json") ? "json" : "text";
+
+  const selectAt = rest.findIndex((t) => t === "--select" || t.startsWith("--select="));
+  const selectRaw =
+    selectAt === -1
+      ? undefined
+      : (rest[selectAt] as string).includes("=")
+        ? (rest[selectAt] as string).split("=").slice(1).join("=")
+        : rest[selectAt + 1];
+  const select = selectRaw?.split(",").map((f) => f.trim()).filter(Boolean);
+
+  const consumed = new Set(["--json", "--compact", "--agent", "--no-color", "--no-input", "--yes"]);
+  const toolArgv = rest.filter((token, i) => {
+    if (consumed.has(token)) return false;
+    if (token === "--select" || token.startsWith("--select=")) return false;
+    if (selectAt !== -1 && i === selectAt + 1 && !(rest[selectAt] as string).includes("=")) return false;
+    return true;
+  });
 
   try {
     const parsed = parseArgs(toolArgv, flagsFor(spec.schema));
@@ -396,20 +454,21 @@ export async function runCli(argv: string[]): Promise<number> {
       guard.check(spec.name, spec.risk, (args as { confirm?: boolean }).confirm, summary);
     }
 
-    emit(await spec.handler(args as never, ctx), format);
-    return 0;
+    const result = await spec.handler(args as never, ctx);
+    emit(select?.length ? selectFields(result, select) : result, format);
+    return EXIT.ok;
   } catch (error) {
     if (error instanceof UsageError) {
       emitError(error);
-      process.stderr.write(renderToolHelp(spec));
-      return 2;
+      if (!agent) process.stderr.write(renderToolHelp(spec));
+      return EXIT.usage;
     }
     if (error instanceof z.ZodError) {
       const first = error.issues[0];
       emitError(new Error(first ? `${first.path.join(".") || "argument"}: ${first.message}` : error.message));
-      return 2;
+      return EXIT.usage;
     }
     emitError(error);
-    return 1;
+    return exitCodeFor(error);
   }
 }

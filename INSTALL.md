@@ -1,4 +1,4 @@
-# Substack MCP setup
+# Install
 
 Substack has no public API. This server calls the same JSON endpoints Substack's own web app calls, signed with your browser session cookie.
 
