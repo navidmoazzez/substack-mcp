@@ -2,7 +2,29 @@
 
 | Component | Version | Last Updated |
 |-----------|---------|--------------|
-| substack-mcp-cli | 2.2.1 | 2026-09-04 |
+| substack-mcp-cli | 2.2.2 | 2026-09-04 |
+
+---
+
+## 2.2.2
+
+Two real bugs, and honest numbers.
+
+`--select posts.title,posts.slug` returned only the slug. Two paths under one
+head overwrote each other, so the flag whose entire purpose is choosing what you
+keep was quietly dropping most of it. Paths are grouped by their first segment
+now, with regression tests at three depths.
+
+`--port 8788` and `--host` were ignored unless written with an equals sign. The
+space form fell through to the default without complaining.
+
+The context cost in the README was characters divided by four. Counted properly
+with a tokeniser against a live handshake it is 18,008 a turn, not 19,900, and
+the payload is 47% JSON Schema structure, 36% argument descriptions, 17% tool
+descriptions. The CLI side said "roughly a hundred tokens" and is 99.
+
+The desktop extension is offered in the README now. The repo has always built
+one and never mentioned it.
 
 ---
 
