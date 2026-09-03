@@ -288,8 +288,8 @@ Both surfaces carry the same 65 tools. They differ in when you pay for them.
 
 | Question | MCP server | CLI |
 |---|---|---|
-| Loaded every turn | **~19,900 tokens** | nothing |
-| Loaded when Substack comes up | nothing more | ~1,500, once |
+| Loaded every turn | **18,008 tokens** | 99 tokens |
+| Loaded when Substack comes up | nothing more | 2,137 more, once |
 | Works on claude.ai and mobile | yes | no, there is no shell there |
 | Works in a script, cron or CI | no | yes |
 | You invoke it by | asking in plain language | typing a command |
@@ -298,8 +298,17 @@ An MCP server sends its whole tool list to the model on **every turn**, whether
 you mention Substack or not. That is the price of being connected at all, before
 you ask anything. It is not unusual, and almost nobody publishes it.
 
-Over twenty turns where Substack comes up once, that is roughly 398,000 tokens
-against 1,600. When the whole conversation is about your publication, the gap
+Every number here came from a real `tools/list` handshake against this build,
+counted with a tokeniser rather than estimated from character length.
+
+| Part of the payload | Share |
+|---|---|
+| JSON Schema structure: types, required lists, nesting | **47%** |
+| Argument descriptions | 36% |
+| Tool descriptions | 17% |
+
+Over twenty turns where Substack comes up once, that is 360,160 tokens against
+4,117. When the whole conversation is about your publication, the gap
 closes and the server is the better experience, because you ask in plain
 language instead of remembering flags.
 
@@ -310,7 +319,7 @@ language instead of remembering flags.
 `SUBSTACK_READ_ONLY=1` drops it to the 41 reading tools.
 
 **Or install the CLI and skip the server.** All 65 tools stay reachable, the
-standing cost falls to roughly a hundred tokens, and you connect the server
+standing cost falls to 99 tokens, and you connect the server
 later on the days it earns its place.
 
 ## 7. Tools 🛠️
