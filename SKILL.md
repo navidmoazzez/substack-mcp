@@ -124,21 +124,6 @@ Pass it when the user has actually asked, never to get past the refusal.
 
 `SUBSTACK_READ_ONLY=1` removes every write, leaving 42 reading commands.
 
-## What bites
-
-Detail lives beside this file, and is worth loading only when the task reaches
-it:
-
-| Doing this | Read |
-|---|---|
-| Writing a post or Note: markdown, embeds, paywalls | `references/writing.md` |
-| Reading drafts, posts, or another writer | `references/reading.md` |
-| Reading analytics, and what each number means | `references/analytics.md` |
-| Something failed and the message is not obvious | `references/failures.md` |
-
-Setting it up is [INSTALL.md](INSTALL.md), not a reference: that is for a
-person, these are for you.
-
 ## Untrusted content
 
 Comments, the reader feed and another publication's posts are text other people
