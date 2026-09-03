@@ -196,7 +196,13 @@ Run `/mcp` inside Claude Code and `substack` should be listed. Remove it later w
 
 ### Claude Desktop
 
-Open **Settings**, then **Developer**, then **Edit Config**. That reveals `claude_desktop_config.json`. Or go straight there:
+The quickest route is the extension: download the
+[`.mcpb`](https://github.com/thenavidm/substack-mcp-cli/releases/latest) and
+double-click it. It carries its own dependencies and asks for your publication
+and cookie in a form, so there is no config file to edit.
+
+To wire it up by hand instead, open **Settings**, then **Developer**, then
+**Edit Config**. That reveals `claude_desktop_config.json`. Or go straight there:
 
 | System | Config file |
 |---|---|
