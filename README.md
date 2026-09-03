@@ -249,7 +249,7 @@ Zed, Cline, Continue and any other MCP client over stdio all work. They each wan
 docker run -i --rm \
   -e SUBSTACK_PUBLICATION_URL=example.substack.com \
   -e SUBSTACK_SESSION_TOKEN=your-connect-sid-value \
-  ghcr.io/navidmoazzez/substack-mcp:latest
+  ghcr.io/thenavidm/substack-mcp:latest
 ```
 
 ### Self-hosted over HTTP
@@ -873,9 +873,9 @@ Remove the server from your client's config, which for Claude Code is `claude mc
 
 ## Questions 💬
 
-Run into a problem or have a question? [Open an issue](https://github.com/navidmoazzez/substack-mcp-cli/issues) and I will help.
+Run into a problem or have a question? [Open an issue](https://github.com/thenavidm/substack-mcp-cli/issues) and I will help.
 
-Found a security vulnerability? [Report it privately](https://github.com/navidmoazzez/substack-mcp-cli/security/advisories/new) instead, never as an issue. [SECURITY.md](SECURITY.md) covers what this holds, the write-safety model, and running it over HTTP.
+Found a security vulnerability? [Report it privately](https://github.com/thenavidm/substack-mcp-cli/security/advisories/new) instead, never as an issue. [SECURITY.md](SECURITY.md) covers what this holds, the write-safety model, and running it over HTTP.
 
 ## About the author 👋
 

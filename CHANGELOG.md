@@ -68,7 +68,7 @@ in the README was checked and four broken ones fixed.
 
 ## 2.0.3
 
-The repository moved to `navidmoazzez/substack-mcp`. Package links updated to match. No code change.
+The repository moved to `thenavidm/substack-mcp`. Package links updated to match. No code change.
 
 ---
 

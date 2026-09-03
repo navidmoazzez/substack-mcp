@@ -97,4 +97,4 @@ If you are on a custom domain and get a 403 mentioning `error code: 1010`, that 
 ## Links
 
 - [Substack](https://substack.com)
-- [Repository](https://github.com/navidmoazzez/substack-mcp)
+- [Repository](https://github.com/thenavidm/substack-mcp)

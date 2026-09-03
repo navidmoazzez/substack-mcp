@@ -38,7 +38,7 @@ Options:
   SUBSTACK_MAX_RETRIES              retries on rate limits and 5xx, default 3
   SUBSTACK_USER_AGENT               override the browser UA sent to Substack
 
-https://github.com/navidmoazzez/substack-mcp
+https://github.com/thenavidm/substack-mcp
 `;
 
 /**
