@@ -238,13 +238,24 @@ export function exitCodeFor(error: unknown): number {
 export function selectFields(data: unknown, paths: string[]): unknown {
   if (Array.isArray(data)) return data.map((d) => selectFields(d, paths));
   if (data === null || typeof data !== "object") return data;
-  const out: Record<string, unknown> = {};
+
+  // Paths are grouped by their first segment before recursing. Walking them one
+  // at a time and assigning `out[head]` each time meant the last path won:
+  // `--select posts.uri,posts.text` returned only the text, silently.
+  const byHead = new Map<string, string[]>();
   for (const path of paths) {
     const [head, ...rest] = path.split(".");
     if (head === undefined) continue;
+    const group = byHead.get(head) ?? [];
+    if (rest.length) group.push(rest.join("."));
+    byHead.set(head, group);
+  }
+
+  const out: Record<string, unknown> = {};
+  for (const [head, rest] of byHead) {
     const value = (data as Record<string, unknown>)[head];
     if (value === undefined) continue;
-    out[head] = rest.length ? selectFields(value, [rest.join(".")]) : value;
+    out[head] = rest.length ? selectFields(value, rest) : value;
   }
   return out;
 }
