@@ -2,7 +2,23 @@
 
 | Component | Version | Last Updated |
 |-----------|---------|--------------|
-| substack-mcp-cli | 2.2.0 | 2026-09-02 |
+| substack-mcp-cli | 2.2.1 | 2026-09-04 |
+
+---
+
+## 2.2.1
+
+Every link in the package pointed at a GitHub account that no longer exists.
+
+The account was renamed, so the clone command, the issues link, the security
+advisory link and the setup URL inside `src/` were all resolving through
+GitHub's rename redirect, which stops working once someone else claims the old
+name.
+
+npm serves whatever was in the published tarball, so fixing GitHub did not fix
+the package page. This release is what corrects it.
+
+Also: the read-only tool count said 42 and is 41.
 
 ---
 
