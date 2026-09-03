@@ -33,8 +33,17 @@ export type HttpOptions = {
 };
 
 export function httpOptionsFromEnv(argv: string[]): HttpOptions {
-  const portArg = argv.find((a) => a.startsWith("--port="))?.split("=")[1];
-  const hostArg = argv.find((a) => a.startsWith("--host="))?.split("=")[1];
+  // Both spellings: `--port=8788` and `--port 8788`. Accepting only the equals
+  // form meant the space form fell through to the default with no complaint,
+  // which looks exactly like the flag being ignored, because it was.
+  const valueOf = (name: string): string | undefined => {
+    const i = argv.findIndex((a) => a === name || a.startsWith(`${name}=`));
+    if (i === -1) return undefined;
+    const token = argv[i] as string;
+    return token.includes("=") ? token.split("=").slice(1).join("=") : argv[i + 1];
+  };
+  const portArg = valueOf("--port");
+  const hostArg = valueOf("--host");
 
   return {
     port: Number(portArg ?? process.env.SUBSTACK_MCP_PORT ?? 8788),
