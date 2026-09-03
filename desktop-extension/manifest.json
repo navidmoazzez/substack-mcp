@@ -1,0 +1,55 @@
+{
+  "manifest_version": "0.2",
+  "name": "substack",
+  "display_name": "Substack",
+  "version": "2.2.0",
+  "description": "Substack MCP server and CLI for Claude Code and AI agents. 65 tools for drafts, posts, Notes, subscribers, analytics, tags, comments and researching other publications.",
+  "long_description": "Connects Claude to a Substack publication you own.\n\nSubstack publishes no API, so this calls the same endpoints its own web app calls, signed with your session cookie. There is no OAuth app to register: the setup is your publication URL and the connect.sid cookie from a browser you are already signed in to.\n\nPublishing emails every subscriber and cannot be unsent, so publish_draft, publish_note, every delete and comment_on_post refuse to run without an explicit confirmation.\n\nFour tools need no login at all, so researching other publications works before any setup.",
+  "author": { "name": "Navid Moazzez", "url": "https://navid.me" },
+  "repository": { "type": "git", "url": "https://github.com/navidmoazzez/substack-mcp-cli" },
+  "homepage": "https://github.com/navidmoazzez/substack-mcp-cli",
+  "documentation": "https://github.com/navidmoazzez/substack-mcp-cli#readme",
+  "support": "https://github.com/navidmoazzez/substack-mcp-cli/issues",
+  "license": "MIT",
+  "keywords": ["substack", "newsletter", "publishing", "notes", "mcp"],
+  "server": {
+    "type": "node",
+    "entry_point": "server/index.js",
+    "mcp_config": {
+      "command": "node",
+      "args": ["${__dirname}/server/index.js"],
+      "env": {
+        "SUBSTACK_PUBLICATION_URL": "${user_config.publication_url}",
+        "SUBSTACK_SESSION_TOKEN": "${user_config.session_token}",
+        "SUBSTACK_READ_ONLY": "${user_config.read_only}"
+      }
+    }
+  },
+  "user_config": {
+    "publication_url": {
+      "type": "string",
+      "title": "Your publication",
+      "description": "For example example.substack.com. Leave empty to research other publications only.",
+      "required": false
+    },
+    "session_token": {
+      "type": "string",
+      "title": "Session cookie",
+      "description": "The connect.sid value from a browser signed in to Substack. It expires after about 90 days.",
+      "sensitive": true,
+      "required": false
+    },
+    "read_only": {
+      "type": "boolean",
+      "title": "Read only",
+      "description": "Hide every tool that can publish, schedule, delete or comment.",
+      "default": false,
+      "required": false
+    }
+  },
+  "compatibility": {
+    "claude_desktop": ">=0.10.0",
+    "platforms": ["darwin", "win32", "linux"],
+    "runtimes": { "node": ">=20" }
+  }
+}
