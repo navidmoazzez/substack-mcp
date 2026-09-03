@@ -84,7 +84,9 @@ function kindOf(schema: ZodTypeAny): { kind: FlagKind; choices?: string[]; repea
       // objects is not worth flattening, so it takes JSON.
       const element = unwrap((schema as unknown as { _def: { type: ZodTypeAny } })._def.type).inner;
       const elementKind = (element as { _def: { typeName?: string } })._def.typeName;
-      const scalar = elementKind === "ZodString" || elementKind === "ZodNumber";
+      // An enum element is a word you type, so it belongs with the scalars.
+      const scalar =
+        elementKind === "ZodString" || elementKind === "ZodNumber" || elementKind === "ZodEnum";
       return { kind: scalar ? "string" : "json", repeatable: true };
     }
     default:
@@ -217,9 +219,14 @@ export function exitCodeFor(error: unknown): number {
   const status = e?.status;
   const text = `${e?.code ?? ""} ${e?.message ?? ""}`.toLowerCase();
   if (status === 429 || /rate ?limit/.test(text)) return EXIT.rateLimited;
+  // Config before auth: "no account configured" mentions a token, and matching
+  // auth first sent someone who had configured nothing looking for an expired
+  // credential. Only when there is no HTTP status, so a real 401 still wins.
+  if (!status && /not configured|no [a-z ]*(account|credential|token|key)s? (is |are )?configured|missing .*env/.test(text))
+    return EXIT.config;
   if (status === 401 || status === 403 || /auth|credential|token|cookie|session/.test(text)) return EXIT.auth;
   if (status === 404 || /not found/.test(text)) return EXIT.notFound;
-  if (/not configured|missing .*env|config/.test(text)) return EXIT.config;
+  if (/will not run without|read-only|is unavailable/.test(text)) return EXIT.usage;
   if (typeof status === "number" && status >= 500) return EXIT.api;
   return EXIT.api;
 }

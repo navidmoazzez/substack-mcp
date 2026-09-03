@@ -70,7 +70,17 @@ async function main(): Promise<void> {
 
   // An unknown word used to fall through and start the server, which then sat
   // waiting on stdin: a typo looked like a hang, and scripts saw exit code 0.
-  if (invokedAsCli() && command !== undefined && !command.startsWith("-")) {
+  // These belong to the entry point rather than the tool list, and they are
+  // what someone types when nothing works yet. Rejecting them as unknown
+  // commands sent them to the server binary to diagnose the CLI.
+  const ENTRY_COMMANDS = new Set(["login", "doctor", "help"]);
+
+  if (
+    invokedAsCli() &&
+    command !== undefined &&
+    !command.startsWith("-") &&
+    !ENTRY_COMMANDS.has(command)
+  ) {
     process.stderr.write(
       `${JSON.stringify({ error: `Unknown command '${command}'. Run \`substack-cli\` to list them.` }, null, 2)}\n`,
     );
