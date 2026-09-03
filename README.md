@@ -301,7 +301,7 @@ language instead of remembering flags.
 
 **Turn the server off when you are not using Substack.** In Claude Code that is
 `@substack` to toggle, and every client has an equivalent.
-`SUBSTACK_READ_ONLY=1` drops it to the 42 reading tools.
+`SUBSTACK_READ_ONLY=1` drops it to the 41 reading tools.
 
 **Or install the CLI and skip the server.** All 65 tools stay reachable, the
 standing cost falls to roughly a hundred tokens, and you connect the server
@@ -751,7 +751,7 @@ tighten or tune it.
 
 | Variable | Default | What it does |
 |---|---|---|
-| `SUBSTACK_READ_ONLY` | `0` | `1` hides every write, leaving the 42 reading tools |
+| `SUBSTACK_READ_ONLY` | `0` | `1` hides every write, leaving the 41 reading tools |
 | `SUBSTACK_ALLOW_DESTRUCTIVE` | `1` | `0` keeps ordinary writes, blocks publishing and deleting |
 | `SUBSTACK_AUDIT_LOG` | none | Path to an append-only log of every attempted write |
 

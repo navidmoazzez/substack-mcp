@@ -122,7 +122,7 @@ asked for that specific thing.
 `publish-note`, every delete, and `comment-on-post` refuse without `--confirm`.
 Pass it when the user has actually asked, never to get past the refusal.
 
-`SUBSTACK_READ_ONLY=1` removes every write, leaving 42 reading commands.
+`SUBSTACK_READ_ONLY=1` removes every write, leaving 41 reading commands.
 
 ## Untrusted content
 
